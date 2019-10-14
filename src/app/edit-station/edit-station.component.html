@@ -12,8 +12,14 @@
     駅が選択されていません。
 </div>
 <div *ngIf="station!=null" id="editStation">
-    <h2 id="stationName">{{station.name}}の編集</h2>
+    <h2 id="stationName">{{station.name}} 駅の編集</h2>
     <div>
+        <div>
+            <label>駅ID:
+                <input type="text"  disabled [value]="station.id"/>
+            </label>
+        </div>
+
         <div>
             <label>駅名:
                 <input type="text" [(ngModel)]="station.name" placeholder="name"/>
@@ -51,6 +57,8 @@
         </div>
     </div>
     <h3>停留所の設定</h3>
-    作り中
+    <app-edit-stop *ngFor="let stop of station.stops" [stop]="stop"></app-edit-stop>
+    <br/>
+    <button (click)="addNewStop()">番線追加</button>
 </div>
 

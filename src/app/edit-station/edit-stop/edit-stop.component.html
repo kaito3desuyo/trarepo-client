@@ -1,0 +1,36 @@
+<div>
+    <h2>{{stop.name}} 番線の編集</h2>
+    <button (click)="addStop()">番線挿入</button><button (click)="deleteStop()" >番線削除</button>
+    <div>
+        <label>番線ID:
+            <input type="text"  disabled [value]="stop.id"/>
+        </label>
+    </div>
+
+    <div>
+        <label>番線名:
+            <input type="text" [(ngModel)]="stop.name" placeholder="name"/>
+        </label>
+    </div>
+    <div>
+        <label>番線説明:
+            <input type="text" [(ngModel)]="stop.description" />
+        </label>
+    </div>
+    <div>
+        <label>緯度(緯度):
+            <input type="number" step="any" min="-90" max="90" [(ngModel)]="stop.lat" />
+        </label>
+    </div>
+    <div>
+        <label>経度(東経):
+            <input type="number" step="any" min="-180" max="180" [(ngModel)]="stop.lon" />
+        </label>
+    </div>
+    <div>
+        <label>運賃計算ゾーンの設定:
+            <input type="text" [(ngModel)]="stop.zoneID" />
+        </label>
+        todo:(運賃計算ゾーンの設定方法は要検討)
+    </div>
+</div>

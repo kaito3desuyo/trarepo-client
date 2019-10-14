@@ -20,4 +20,10 @@ export class EditStationComponent implements OnInit {
     this.stationService.getStation().subscribe(station=>this.station=station);
   }
 
+  /**
+   * add new stop to this.station
+   */
+  addNewStop(){
+    this.station.addNewStop();
+  }
 }
