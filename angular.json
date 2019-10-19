@@ -28,9 +28,12 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/lib/leaflet.css"
             ],
-            "scripts": []
+            "scripts": [
+              "src/lib/leaflet.js",
+            "src/lib/busmap.js"]
           },
           "configurations": {
             "production": {

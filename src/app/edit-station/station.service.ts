@@ -12,16 +12,26 @@ export class StationService {
   private deteleStops:Array<Stop>=[];
   private updateStations:Array<Station>=[];
   private updateStops:Array<Stop>=[];
-  private nowStationID:string;
+  private nowStation:Station;
+  private obser:Observable<Station>;
 
 
   constructor() {
     const station=new Station();
     this.stations[station.id]=station;
-    this.nowStationID=station.id;
+    this.nowStation=station;
+    this.obser=of(this.nowStation);
   }
   getStation():Observable<Station>{
-    return of(this.stations[this.nowStationID]);
+    return this.obser;
+  }
+  makeNewStation(lat:number,lon:number){
+    const newStation=new Station();
+    newStation.lat=lat;
+    newStation.lon=lon;
+    this.stations[newStation.id]=newStation;
+    this.nowStation=newStation;
+    this.obser.subscribe();
   }
 
 

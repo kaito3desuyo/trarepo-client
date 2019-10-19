@@ -1,4 +1,31 @@
 #routeMap{
-  height:200px;
   background-color: #DDF;
+}
+.main{
+  display: flex;
+  width: 100%;
+}
+.main-left{
+  display: block;
+  width: calc(100% - 500px);
+  height:800px;
+}
+.main-right{
+  display: block;
+  width: 500px;
+  padding-left: 50px;
+  overflow: scroll;
+  height:800px;
+}
+
+
+
+#mapMenu{
+  display: none;
+  position: fixed;
+  width: 200px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 1px 1px 1px rgba(0,0,0,.2);
+  z-index: 1000;
 }
