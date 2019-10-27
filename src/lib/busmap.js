@@ -3727,8 +3727,17 @@ function f_trip_timetable(a_trip_id, a_stop_sequence, a_stop_id) {
     }
 }
 
+var routeCallBack=null;
+function setRouteCallback(funk){
+    console.log(funk);
+    routeCallBack=funk;
+}
 
 function f_show_routes(a_parent_route_id) {
+    console.log(a_parent_route_id);
+    if(routeCallBack!=null){
+        routeCallBack(a_parent_route_id);
+    }
     setTimeout(function() { //座標取得の関係で遅らせる。
         f_show_route_name(a_parent_route_id);
         f_route_color_change(a_parent_route_id);

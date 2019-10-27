@@ -2,10 +2,77 @@
     <h1 id="title">
         トラれぽ　路線制作ページ
     </h1>
-    <div id="routeMap">
-        ここにRouteMapをいれる。
-        <br/>RouteMapで選択された路線が今編集する路線として下に表示される。
-        <br/>Map中の駅の場所右クリックで路線に駅を追加できるようにする。
+</div>
+<!--スプリットデザイン参考はhttps://webdesignday.jp/inspiration/technique/css/3962/-->
+<div class="main">
+    <div class="main-left">
+        <div id="div1" onContextmenu="return false;"></div>
     </div>
+    <div class="main-right">
+        <div *ngIf="route==null" id="routeIsNull">
+            路線が選択されていません。
+        </div>
+        <div *ngIf="route!=null" id="editRoute">
+            <h2 id="stationName">{{route.name}} の編集</h2>
+            <div>
+                <div>
+                    <label>路線ID:
+                        <input type="text"  disabled [value]="route.id"/>
+                    </label>
+                </div>
+
+                <div>
+                    <label>路線名:
+                        <input type="text" [(ngModel)]="route.name" placeholder="name"/>
+                    </label>
+                </div>
+                <div>
+                    <label>路線タイプ:
+                        <select [(ngModel)]="route.routeType">
+                            <option value="0">高速鉄道</option>
+                            <option value="1">鉄道</option>
+                            <option value="2">地下鉄</option>
+                            <option value="3">市電</option>
+                            <option value="4">ケーブルカー</option>
+                            <option value="5">ロープウェイ</option>
+                            <option value="6">高速バス</option>
+                            <option value="7">路線バス</option>
+                            <option value="8">コミュニティバス</option>
+                            <option value="9">航路</option>
+                            <option value="10">渡し舟</option>
+                            <option value="11">空路</option>
+                            <option value="12">その他</option>
+                        </select>
+                    </label>
+                </div>
+                <div>
+                    <label>路線ナンバリング:
+                        <input type="text" [(ngModel)]="route.routeNo" />
+                    </label>
+                </div>
+                <div>
+                    <label>路線説明:
+                        <input type="text" [(ngModel)]="route.description" />
+                    </label>
+                </div>
+            </div>
+            <h3>停車駅の設定</h3>
+            <svg id="stations">
+                <g *ngFor="let station of route.stations">
+                    <line class="fs-railmap-line" x1="44" x2="44" y1="40" y2="96"></line>
+                </g>
+                <g *ngFor="let station of route.stations">
+                    <text class="fs-railmap-station" x="64" y="156">南彦根</text>
+                    <circle class="fs-railmap-circle" cx="44" cy="152" r="12"></circle>
+                    <text class="fs-railmap-tracks" x="44" y="156">2</text>
+                </g>
+
+            </svg>
+        </div>
+    </div>
+</div>
+<div>
+    <h3>開発者メモ</h3>
+
 </div>
 
