@@ -65,10 +65,15 @@
     </div>
 </div>
 <div>
-    <h3>今後の予定</h3>
-    ここにRouteMapをいれる。
-    <br/>RouteMapで選択された駅が今編集する駅として下に表示される。
-    <br/>Map中の駅の場所右クリックで新規駅追加できるようにする。
+    <h3>開発者メモ</h3>
+    現在はまだbusmap.jsとAngular側の統合ができていない。
+    将来busmapがModule化される可能性に賭けて放置する。
+    busmapがModule化されたらそのままtypescriptに書き直してangular側と共通のstationを使う。
+    Module化されなければ、自分でtypescriptで書き直す。
+    <br/>
+    緯度経度で区切って、必要な部分だけ駅データを読み込んでいる。
+    mapスクロールした時に、駅データ再読み込みする必要がある。
+
 </div>
 
 <div id="mapMenu" (click)="makeNewStation()">

@@ -6,7 +6,7 @@
 
 //クリックできるところを青字下線
 document.getElementsByTagName("style")[0].innerHTML += " span[onclick] {color: blue; text-decoration: underline;}";
-let trarepo=true;
+
 
 //グローバル変数
 let l_map; //leaflet
@@ -19,8 +19,8 @@ let l_settings = {};//設定
 
 //基本となる関数
 async function f_busmap(a_settings) {
-    onRightClick();
     //a_settingsは設定
+    onRightClick();
     const c_input = a_settings["data"];
     //const c_response = [];//XHR
     const c_bmd = {"rt": null, "stops": [], "ur_stops": [], "parent_stations": [], "ur_routes": [], "calendar": [], "trips": []};//バスマップに用いるデータをここにまとめる、stopsは仮に残す
@@ -115,7 +115,7 @@ async function f_busmap(a_settings) {
     f_make_shape_segments(c_bmd);
     console.timeEnd("t_9");
     console.time("t_10");
-    f_cut_shape_segments(c_bmd, c_input_settings["zoom_level"]); //3s遅い。高速化困難。ここでshape_pointが増加、stopにnearest_shape_pt_idを追加、shape_pt_arrayに変更あり。
+    f_cut_shape_segments(c_bmd, c_input_settings); //3s遅い。高速化困難。ここでshape_pointが増加、stopにnearest_shape_pt_idを追加、shape_pt_arrayに変更あり。
     console.timeEnd("t_10");
     console.time("t_11");
     f_make_new_shape_pt_array(c_bmd);
@@ -339,7 +339,6 @@ function f_geojson_to_json(a_geojson) {
 */
 
 /*
-
 {
 	"type": "FeatureCollection",
 	"features": [
@@ -355,8 +354,6 @@ function f_geojson_to_json(a_geojson) {
 		}
 	]
 }
-
-
 {
 	"type": "Topology",
 	"objects": {
@@ -381,7 +378,6 @@ function f_geojson_to_json(a_geojson) {
 		[[100, 0], [101, 0], [101, 1], [100, 1], [100, 0]]
 	]
 }
-
 */
 
 function f_from_api(a_api) {
@@ -391,6 +387,7 @@ function f_from_api(a_api) {
         c_stops.push({
             "stop_id": a_api["station"][i1]["id"],
             "stop_name": a_api["station"][i1]["name"],
+            "parent_station": a_api["station"][i1]["id"],
             "stop_lat": a_api["station"][i1]["lat"],
             "stop_lon": a_api["station"][i1]["lon"]//,
         });
@@ -437,13 +434,14 @@ function f_input_settings(a_settings) {
         "change": true,
         "leaflet": true,
         "clickable": true,//線等をクリックできる
-        "timetable": false,//時刻表を表示する
+        "timetable": true,//時刻表を表示する
         "direction": true,
         "parent_route_id": "route_id",
         "stop_name": true,
         "stop_name_overlap":true,
         "zoom_level": 16,
         "svg_zoom_level": 16, //互換性のため残す
+        "cut_zoom_level": 16, //f_cut_shape_segments用
         "svg_zoom_ratio": 0, //SVG表示縮小率=zoom_level - svg_zoom_level
         "background_map": true,
         "background_layers": [["https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {attribution: "<a href=\"https://maps.gsi.go.jp/development/ichiran.html\">地理院タイル</a>", opacity: 0.25}]],
@@ -477,20 +475,20 @@ function f_input_settings(a_settings) {
         c_settings_temp[i1] = a_settings[i1];
     }
     //設定の制限（暫定的に連動）
-    if (c_settings_temp["global"] === true) {
-        c_settings_temp["change"] = true;
-        c_settings_temp["leaflet"] = true;
-        c_settings_temp["clickable"] = true;
-        c_settings_temp["timetable"] = true;
-    }
-    //設定の制限
-    //グローバルにしないと後から変えられない
-    if (c_settings_temp["global"] !== true) {
-        c_settings_temp["change"] = false;
-        c_settings_temp["leaflet"] = false;
-        c_settings_temp["clickable"] = false;
-        c_settings_temp["timetable"] = false;
-    }
+    // if (c_settings_temp["global"] === true) {
+    //     c_settings_temp["change"] = true;
+    //     c_settings_temp["leaflet"] = true;
+    //     c_settings_temp["clickable"] = true;
+    //     c_settings_temp["timetable"] = true;
+    // }
+    // //設定の制限
+    // //グローバルにしないと後から変えられない
+    // if (c_settings_temp["global"] !== true) {
+    //     c_settings_temp["change"] = false;
+    //     c_settings_temp["leaflet"] = false;
+    //     c_settings_temp["clickable"] = false;
+    //     c_settings_temp["timetable"] = false;
+    // }
     //設定の制限
     //クリックできないと時刻表を表示できない
     if (c_settings_temp["clickable"] !== true) {
@@ -515,11 +513,10 @@ function f_html(a_settings) {
         l_html += "<div id=\"div_leaflet\" style=\"width: auto; height: 768px; background: #FFFFFF;\"></div>"; //背景色を白にしておく
     }
     //clickable
-    if(!trarepo){
     if (a_settings["clickable"] === true) {
-        l_html += "<div><a id=\"output_svg\" href=\"#\" download=\"busmap.svg\" onclick=\"f_output_svg()\">SVG保存</a></div>";
-        l_html += "<div>地図上の線や停留所記号、停留所名をクリックすると、強調表示や時刻表の表示ができる。</div>";
-        l_html += "<div><span onclick=\"f_route_color()\">全路線を着色</span> <span onclick=\"f_tooltip()\">補足非表示</span></div>";
+        // l_html += "<div><a id=\"output_svg\" href=\"#\" download=\"busmap.svg\" onclick=\"f_output_svg()\">SVG保存</a></div>";
+        // l_html += "<div>地図上の線や停留所記号、停留所名をクリックすると、強調表示や時刻表の表示ができる。</div>";
+        // l_html += "<div><span onclick=\"f_route_color()\">全路線を着色</span> <span onclick=\"f_tooltip()\">補足非表示</span></div>";
     }
     //設定変更項目の表示
     if (a_settings["change"] === true) {
@@ -547,7 +544,6 @@ function f_html(a_settings) {
         l_div4 += "<div>経由路線（路線をクリックすると路線時刻表とダイヤグラムを表示し、地図上で強調表示）</div>";
         l_div4 += "<ul id=\"route_list\"></ul>";
         l_html += "<div id=\"div_timetable\">" + l_div4 + "</div>";
-    }
     }
     return l_html;
 }
@@ -1033,7 +1029,6 @@ function f_make_bmd_from_gtfs(a_data_i1) {
 各系統の停留所リストは途中の欠損禁止。
 停留所一覧の欠損も禁止。
 緯度経度の欠損は可。
-
 現状
 "calendar":[{"service_id": "平日", "monday": "1", "start_date": "20181201", "end_date": "20190331"}]
 , "stops": [{"location_type": "0", "parent_station": "市役所_parent", "stop_id": "1001-1", "stop_name": "市役所", "stop_lat": 35, "stop_lon": 138}]
@@ -1476,7 +1471,7 @@ function f_delete_point(a_data) {
 
 
 
-function f_cut_shape_segments(a_data, a_zoom_level) {
+function f_cut_shape_segments(a_data, a_settings) {
     //使う関数
     //点と線分の距離
     //そのまま流用したため、未検証。
@@ -1507,9 +1502,9 @@ function f_cut_shape_segments(a_data, a_zoom_level) {
     }
 
 
-    //切断の前にズームレベル16タイルに分けて目次を作る。
-    const c_z = 16;
-    const c_z_tile = 2 ** (c_z - 8 - a_zoom_level); //ズームレベルa_zoom_levelのタイル座標をズームレベル16のタイル番号に変換する。
+    //切断の前にズームレベルc_zタイルに分けて目次を作る。
+    const c_z = a_settings["cut_zoom_level"];
+    const c_z_tile = 2 ** (c_z - 8 - a_settings["zoom_level"]); //ズームレベルzoom_levelのタイル座標をズームレベルc_zのタイル番号に変換する。
     //経度は基準をずらしているのに注意。
     const c_index = {}; //c_shape_segmentsの目次をつくる。
     for (let i1 = 0; i1 < a_data["shape_segments"].length; i1++) {
@@ -1523,6 +1518,7 @@ function f_cut_shape_segments(a_data, a_zoom_level) {
         c_index[c_ley].push(i1);
     }
 
+
     //各stopについて最寄のsegmentを求める。
     for (let i1 = 0; i1 < a_data["stops"].length; i1++) {
         let l_nearest_distance = Number.MAX_VALUE; //shape segmentまでの最短の距離
@@ -1531,6 +1527,8 @@ function f_cut_shape_segments(a_data, a_zoom_level) {
         const c_py = a_data["stops"][i1]["stop_y"];
         const c_px_tile = Math.floor(c_px * c_z_tile);
         const c_py_tile = Math.floor(c_py * c_z_tile);
+        //
+
         //最寄のshape segmentを探す。
         for (let i2 = c_px_tile - 10; i2 <= c_px_tile + 10; i2++) {
             for (let i3 = c_py_tile - 10; i3 <= c_py_tile + 10; i3++) {
@@ -3144,7 +3142,6 @@ function f_make_svg(a_data, a_settings) {
                 }
                 l_g_stop_location += "<circle class=\"stop_location stop_location_" + a_data["stops"][i1]["stop_id"] + "\"";
                 if (a_settings["clickable"] === true) {
-
                     l_g_stop_location += " onclick=\"f_show_stops('" + a_data["stops"][i1]["stop_id"] + "')\"";
                 }
                 l_g_stop_location += " cx=\"" + a_data["stops"][i1]["shape_pt_x"] + "\" cy=\"" + a_data["stops"][i1]["shape_pt_y"] + "\" r=\"" + String(c_min_r * c_zoom_16) + "\" style=\"stroke-width: " + l_stroke_width + "; opacity: 1;\" />";
@@ -3230,7 +3227,6 @@ function f_make_svg(a_data, a_settings) {
                 //停留所名
                 l_g_stop_name += "<text x='" + (c_x + c_x_left + c_min_r * 4) + "' y='" + (l_y_new + c_y_top + c_font_size - 2) + "'><tspan fill=\"#FFFFFF\" stroke=\"FFFFFF\" class=\"stop_name_background stop_name_background_" + a_data["stops"][i1]["stop_id"] + "\"";
                 if (a_settings["clickable"] === true) {
-
                     l_g_stop_name += " onclick=\"f_show_stops('" + a_data["stops"][i1]["stop_id"] + "')\"";
                 }
                 l_g_stop_name += ">" + a_data["stops"][i1]["stop_name"] + "</tspan><tspan fill=\"#000000\" stroke=\"000000\" class=\"stop_time_background stop_time_background_" + a_data["stops"][i1]["stop_id"] + "\"></tspan></text><text x='" + (c_x + c_x_left + c_min_r * 4) + "' y='" + (l_y_new + c_y_top + c_font_size - 2) + "'><tspan fill=\"#000000\" stroke=\"none\" class=\"stop_name stop_name_" + a_data["stops"][i1]["stop_id"] + "\"";
@@ -3497,12 +3493,18 @@ function f_get_parent_station_stop_id(a_stop_id, a_file) {
     }
 }
 
-
+var stopCallBack=null;
+function setStopCallback(funk){
+    console.log(funk);
+    stopCallBack=funk;
+}
 
 
 function f_show_stops(a_stop_id) {
+    if(stopCallBack!=null){
+        stopCallBack(a_stop_id);
+    }
     setTimeout(function() {
-        openStation(a_stop_id);
         f_stop_name(a_stop_id);
         f_show_routes_stops(a_stop_id);
     }, 0);
@@ -3548,8 +3550,8 @@ function f_stop_name(a_stop_id) {
 
     //timetableに追加。
 
-    // document.getElementById("stop_name").innerHTML = f_get(a_stop_id, l_data["stops"], "stop_id", "stop_name");
-    // document.getElementById("timetable").innerHTML = f_stop_timetable(a_stop_id);
+    document.getElementById("stop_name").innerHTML = f_get(a_stop_id, l_data["stops"], "stop_id", "stop_name");
+    document.getElementById("timetable").innerHTML = f_stop_timetable(a_stop_id);
 }
 
 
@@ -3636,7 +3638,7 @@ function f_stop_timetable(a_stop_id) {
 //経由路線表示
 function f_show_routes_stops(a_stop_id) {
     //一覧表のリセット
-    // document.getElementById("route_list").innerHTML = "";
+    document.getElementById("route_list").innerHTML = "";
 
 //同じ停留所の標柱一覧を作る。
     const c_parent_station_stop_id = f_get_parent_station_stop_id(a_stop_id, l_data["stops"]);
@@ -3681,7 +3683,7 @@ function f_show_routes_stops(a_stop_id) {
 
         //ついでに一覧表に載せる。
         if (l_exist === true) {
-            // document.getElementById("route_list").innerHTML += "<li onclick=\"f_show_routes('" + c_parent_route_id + "')\" style='background-color: #" + l_route_color + "; color: #" + l_route_text_color + ";'>" + l_data["ur_routes"][i1]["route_long_name"] + "</li>";
+            document.getElementById("route_list").innerHTML += "<li onclick=\"f_show_routes('" + c_parent_route_id + "')\" style='background-color: #" + l_route_color + "; color: #" + l_route_text_color + ";'>" + l_data["ur_routes"][i1]["route_long_name"] + "</li>";
         }
     }
 
@@ -3728,10 +3730,9 @@ function f_trip_timetable(a_trip_id, a_stop_sequence, a_stop_id) {
 
 function f_show_routes(a_parent_route_id) {
     setTimeout(function() { //座標取得の関係で遅らせる。
-        console.log(a_parent_route_id);
         f_show_route_name(a_parent_route_id);
         f_route_color_change(a_parent_route_id);
-        // f_parent_route_timetable(a_parent_route_id);
+        f_parent_route_timetable(a_parent_route_id);
     }, 0);
 }
 

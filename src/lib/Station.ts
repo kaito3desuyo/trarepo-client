@@ -10,6 +10,12 @@ enum StationTypeList{TRAIN_STATION,BUS_STOP,FERRY_PORT,AIR_PORT}
  * This class is equivalent to a station of JPTI.
  */
 export class Station{
+    public loadFromJSON(value:JSON){
+        this._id=value["id"];
+        this.name=value["name"];
+        this.lat=value["lat"];
+        this.lon=value["lon"];
+    }
     /**
      *  ID of this station.
      *  Each station in the database must have unique ID.
