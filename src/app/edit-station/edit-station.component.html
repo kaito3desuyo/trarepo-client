@@ -1,0 +1,81 @@
+<div style="text-align:center">
+    <h1 id="title">
+        トラれぽ　駅制作ページ
+    </h1>
+</div>
+<!--スプリットデザイン参考はhttps://webdesignday.jp/inspiration/technique/css/3962/-->
+<div class="main">
+    <div class="main-left">
+        <div id="div1" onContextmenu="return false;"></div>
+    </div>
+    <div class="main-right">
+        <div *ngIf="station==null" id="stationIsNull">
+            駅が選択されていません。
+        </div>
+        <div *ngIf="station!=null" id="editStation">
+            <h2 id="stationName">{{station.name}} 駅の編集</h2>
+            <div>
+                <div>
+                    <label>駅ID:
+                        <input type="text"  disabled [value]="station.id"/>
+                    </label>
+                </div>
+
+                <div>
+                    <label>駅名:
+                        <input type="text" [(ngModel)]="station.name" placeholder="name"/>
+                    </label>
+                </div>
+                <div>
+                    <label>駅タイプ:
+                        <select [(ngModel)]="station.type">
+                            <option value="0">鉄道駅</option>
+                            <option value="1">バス停</option>
+                            <option value="2">フェリー乗り場</option>
+                            <option value="3">空港</option>
+                        </select>
+                    </label>
+                </div>
+                <div>
+                    <label>駅ナンバリング:
+                        <input type="text" [(ngModel)]="station.number" />
+                    </label>
+                </div>
+                <div>
+                    <label>駅説明:
+                        <input type="text" [(ngModel)]="station.description" />
+                    </label>
+                </div>
+                <div>
+                    <label>緯度(緯度):
+                        <input type="number" step="any" min="-90" max="90" [(ngModel)]="station.lat" />
+                    </label>
+                </div>
+                <div>
+                    <label>経度(東経):
+                        <input type="number" step="any" min="-180" max="180" [(ngModel)]="station.lon" />
+                    </label>
+                </div>
+            </div>
+            <h3>停留所の設定</h3>
+            <app-edit-stop *ngFor="let stop of station.stops" [stop]="stop"></app-edit-stop>
+            <br/>
+            <button (click)="addNewStop()">番線追加</button>
+        </div>
+    </div>
+</div>
+<div>
+    <h3>開発者メモ</h3>
+    現在はまだbusmap.jsとAngular側の統合ができていない。
+    将来busmapがModule化される可能性に賭けて放置する。
+    busmapがModule化されたらそのままtypescriptに書き直してangular側と共通のstationを使う。
+    Module化されなければ、自分でtypescriptで書き直す。
+    <br/>
+    緯度経度で区切って、必要な部分だけ駅データを読み込んでいる。
+    mapスクロールした時に、駅データ再読み込みする必要がある。
+
+</div>
+
+<div id="mapMenu" (click)="makeNewStation()">
+この場所に駅を作成する
+</div>
