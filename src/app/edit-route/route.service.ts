@@ -10,7 +10,12 @@ export class RouteService {
   private route:BehaviorSubject<Route>=new BehaviorSubject(null);
 
   constructor() {
-    this.route.next(new Route());
+    const route=new Route();
+    route.stations.push(new Station());
+    route.stations.push(new Station());
+    route.stations.push(new Station());
+    route.stations.push(new Station());
+    this.route.next(route);
   }
   getRoute():Observable<Route>{
     return this.route.asObservable();

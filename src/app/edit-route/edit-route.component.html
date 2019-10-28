@@ -57,22 +57,24 @@
                 </div>
             </div>
             <h3>停車駅の設定</h3>
-            <svg id="stations">
-                <g *ngFor="let station of route.stations">
-                    <line class="fs-railmap-line" x1="44" x2="44" y1="40" y2="96"></line>
+            <svg id="stations" class="fs-station-railmap" [attr.height]="56*stationData.length+60" (mousemove)="railmapMouseMove($event)">
+                <g *ngFor="let station of stationData.slice(0,stationData.length-1)">
+                    <line class="fs-railmap-line" [attr.x1]="44" [attr.x2]="44" [attr.y1]="station.y1" [attr.y2]="station.y2"></line>
                 </g>
-                <g *ngFor="let station of route.stations">
-                    <text class="fs-railmap-station" x="64" y="156">南彦根</text>
-                    <circle class="fs-railmap-circle" cx="44" cy="152" r="12"></circle>
-                    <text class="fs-railmap-tracks" x="44" y="156">2</text>
+                <g *ngFor="let station of stationData">
+                    <text class="fs-railmap-station" x="64" [attr.y]="station.y1+4">{{station.station.name}}</text>
+                    <circle class="fs-railmap-circle" cx="44" [attr.cy]="station.y1" r="12"></circle>
+                    <text class="fs-railmap-tracks" x="44" [attr.y]="station.y1+4"></text>
                 </g>
-
+                <g *ngIf="showInsertStation" (click)="addStation()" class="fs-railmap-insert" [attr.transform]="transformY()">
+                    <line x1="0" x2="300" y1="0.5" y2="0" stroke-dasharray="2 1"></line>
+                    <circle  cx="44" cy="0" r="8"></circle><path d="M44 -4 l0 8m-4 -4l 8 0"></path>
+                </g>
             </svg>
         </div>
     </div>
 </div>
 <div>
     <h3>開発者メモ</h3>
-
 </div>
 
