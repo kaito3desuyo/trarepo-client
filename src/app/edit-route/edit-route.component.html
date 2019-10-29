@@ -57,18 +57,19 @@
                 </div>
             </div>
             <h3>停車駅の設定</h3>
-            <svg id="stations" class="fs-station-railmap" [attr.height]="56*stationData.length+60" (mousemove)="railmapMouseMove($event)">
+            <svg id="stations" class="fs-station-railmap" [attr.height]="56*stationData.length+100" (mousemove)="railmapMouseMove($event)">
                 <g *ngFor="let station of stationData.slice(0,stationData.length-1)">
-                    <line class="fs-railmap-line" [attr.x1]="44" [attr.x2]="44" [attr.y1]="station.y1" [attr.y2]="station.y2"></line>
+                    <line class="fs-railmap-line" [attr.x1]="84" [attr.x2]="84" [attr.y1]="station.y1" [attr.y2]="station.y2"></line>
                 </g>
                 <g *ngFor="let station of stationData">
-                    <text class="fs-railmap-station" x="64" [attr.y]="station.y1+4">{{station.station.name}}</text>
-                    <circle class="fs-railmap-circle" cx="44" [attr.cy]="station.y1" r="12"></circle>
-                    <text class="fs-railmap-tracks" x="44" [attr.y]="station.y1+4"></text>
+                    <text (click)="deleteStation(station.station)" class="" x="14" [attr.y]="station.y1+4">削除</text>
+                    <text class="fs-railmap-station" x="104" [attr.y]="station.y1+4">{{station.station.name}}</text>
+                    <circle class="fs-railmap-circle" cx="84" [attr.cy]="station.y1" r="12"></circle>
+                    <text class="fs-railmap-tracks" x="84" [attr.y]="station.y1+4"></text>
                 </g>
                 <g *ngIf="showInsertStation" (click)="addStation()" class="fs-railmap-insert" [attr.transform]="transformY()">
                     <line x1="0" x2="300" y1="0.5" y2="0" stroke-dasharray="2 1"></line>
-                    <circle  cx="44" cy="0" r="8"></circle><path d="M44 -4 l0 8m-4 -4l 8 0"></path>
+                    <circle  cx="84" cy="0" r="8"></circle><path d="M84 -4 l0 8m-4 -4l 8 0"></path>
                 </g>
             </svg>
         </div>

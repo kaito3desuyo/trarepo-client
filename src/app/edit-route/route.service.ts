@@ -11,10 +11,6 @@ export class RouteService {
 
   constructor() {
     const route=new Route();
-    route.stations.push(new Station());
-    route.stations.push(new Station());
-    route.stations.push(new Station());
-    route.stations.push(new Station());
     this.route.next(route);
   }
   getRoute():Observable<Route>{
@@ -42,6 +38,25 @@ export class RouteService {
       }
     };
     req.open("GET", "https://kamelong.com/nodeJS/api/route?id="+routeID, false);
+    req.send(null);
+
+  }
+
+  public setRouteByName(routeName:string){
+
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = () =>{
+      if(req.readyState == 4 && req.status == 200){
+        const route=new Route();
+        const json=JSON.parse(req.response)["route"];
+
+        route.loadFromJSON(json[json.length-1]);
+        this.route.next(route);
+      }
+    };
+    console.log("setRouteByName");
+    console.log(routeName);
+    req.open("GET", "https://kamelong.com/nodeJS/api/route?routeName="+routeName, false);
     req.send(null);
 
   }
