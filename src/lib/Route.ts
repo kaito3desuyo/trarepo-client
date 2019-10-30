@@ -86,7 +86,19 @@ export class Route{
         this._id=value["id"];
         this.name=value["name"];
         this.color=value["color"];
-
+        for(var i=0; i<value["stationList"].length;i++){
+            const j=i;
+            this.stations.push(new Station());
+            const req = new XMLHttpRequest();
+            req.onreadystatechange = () =>{
+                if(req.readyState == 4 && req.status == 200){
+                    const responce=JSON.parse(req.response);
+                    this.stations[j].loadFromJSON(responce);
+                }
+            };
+            req.open("GET", "https://kamelong.com/nodeJS/api/station?stationID="+value["stationList"][j], true);
+            req.send(null);
+        }
     }
 
 

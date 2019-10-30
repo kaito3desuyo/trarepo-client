@@ -16,18 +16,7 @@ export class RouteService {
   getRoute():Observable<Route>{
     return this.route.asObservable();
   }
-  public getRouteFromName(name:string){
-    var req = new XMLHttpRequest();
-    req.onreadystatechange = () =>{
-      if(req.readyState == 4 && req.status == 200){
-        const route=new Route();
-        route.loadFromJSON(JSON.parse(req.response)["route"]);
-        this.route.next(route);
-      }
-    };
-    req.open("GET", "https://kamelong.com/nodeJS/api/route?name="+name, false);
-    req.send(null);
-  }
+
   public getRouteFromID(routeID:string){
     var req = new XMLHttpRequest();
     req.onreadystatechange = () =>{
@@ -50,7 +39,7 @@ export class RouteService {
         const route=new Route();
         const json=JSON.parse(req.response)["route"];
 
-        route.loadFromJSON(json[json.length-1]);
+        route.loadFromJSON(json[Object.keys(json)[0]]);
         this.route.next(route);
       }
     };
