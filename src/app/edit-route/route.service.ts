@@ -11,6 +11,7 @@ export class RouteService {
 
   constructor() {
     const route=new Route();
+    route.asNullRoute();
     this.route.next(route);
   }
   getRoute():Observable<Route>{
@@ -40,14 +41,22 @@ export class RouteService {
         const json=JSON.parse(req.response)["route"];
 
         route.loadFromJSON(json[Object.keys(json)[0]]);
+        console.log(route);
         this.route.next(route);
       }
     };
-    console.log("setRouteByName");
-    console.log(routeName);
     req.open("GET", "https://kamelong.com/nodeJS/api/route?routeName="+routeName, false);
     req.send(null);
-
+  }
+  public deleteRoute(){
+    const route=new Route();
+    route.asNullRoute();
+    this.route.next(route);
+  }
+  public makeNewRoute(){
+    const route=new Route();
+    route.name="新規路線";
+    this.route.next(route);
   }
 
 }

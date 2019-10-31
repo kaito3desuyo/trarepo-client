@@ -9,10 +9,14 @@
         <div id="div1" onContextmenu="return false;"></div>
     </div>
     <div class="main-right">
-        <div *ngIf="route==null" id="routeIsNull">
+        <div *ngIf="route.isNull()" id="routeIsNull">
             路線が選択されていません。
+            <div>
+                <button (click)="makeNewRoute()">路線の新規作成</button>
+            </div>
+
         </div>
-        <div *ngIf="route!=null" id="editRoute">
+        <div *ngIf="!route.isNull()" id="editRoute">
             <h2 id="stationName">{{route.name}} の編集</h2>
             <div>
                 <div>
@@ -20,7 +24,6 @@
                         <input type="text"  disabled [value]="route.id"/>
                     </label>
                 </div>
-
                 <div>
                     <label>路線名:
                         <input type="text" [(ngModel)]="route.name" placeholder="name"/>
@@ -55,6 +58,12 @@
                         <input type="text" [(ngModel)]="route.description" />
                     </label>
                 </div>
+                <div>
+                    <button (click)="deleteRoute()">路線の削除</button>
+                </div>
+                <div>
+                    <button (click)="makeNewRoute()">路線の新規作成</button>
+                </div>
             </div>
             <h3>停車駅の設定</h3>
             <svg id="stations" class="fs-station-railmap" [attr.height]="56*stationData.length+100" (mousemove)="railmapMouseMove($event)">
@@ -77,5 +86,7 @@
 </div>
 <div>
     <h3>開発者メモ</h3>
+    agencyを作っていないかったので、routeを編集なのにAgency設定がありません。
+    Agencyはセレクトボックスで指定できそうだけど、Agencyの数が増えることも考えると検索機能必須かな。
 </div>
 

@@ -36,6 +36,7 @@ export class Route{
     get id():string{
         return this._id;
     }
+
     /**
      * parent agency of the route.
      */
@@ -99,6 +100,14 @@ export class Route{
             req.open("GET", "https://kamelong.com/nodeJS/api/station?stationID="+value["stationList"][j], true);
             req.send(null);
         }
+    }
+
+    public asNullRoute(){
+        this._id="";
+    }
+    public isNull():boolean{
+        return this.id.length==0;
+
     }
 
 
