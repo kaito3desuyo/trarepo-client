@@ -1,0 +1,90 @@
+#routeMap{
+  background-color: #DDF;
+}
+.main{
+  display: flex;
+  width: 100%;
+}
+.main-left{
+  display: block;
+  width: calc(100% - 500px);
+  height:800px;
+}
+.main-right{
+  display: block;
+  width: 500px;
+  padding-left: 50px;
+  overflow: scroll;
+  height:800px;
+}
+
+
+
+#mapMenu{
+  display: none;
+  position: fixed;
+  width: 200px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 1px 1px 1px rgba(0,0,0,.2);
+  z-index: 1000;
+}
+
+//駅リスト
+.fs-station-railmap {
+  cursor: pointer;
+}
+.fs-railmap-line {
+  stroke: #666666;
+  fill: none;
+  stroke-width: 2;
+}
+
+.fs-railmap-station {
+  font-size: 16px;
+  fill: #666666;
+}
+
+.fs-railmap-main .fs-railmap-station {
+  font-weight: 500;
+}
+
+.fs-railmap-main .fs-railmap-station-small {
+  font-weight: 300;
+  font-size: 12px;
+}
+//.fs-railmap-station:hover {
+//  fill:#a852ff;
+//}
+
+.fs-station-railmap g:hover .fs-railmap-station {
+  fill:#a852ff;
+}
+
+.fs-station-railmap g:hover circle {
+  stroke:#a852ff;
+}
+
+.fs-station-railmap g.fs-railmap-main:hover circle {
+  fill: #a852ff;
+}
+
+.fs-station-railmap g:hover .fs-railmap-tracks {
+  fill: #a852ff;
+}
+
+
+.fs-railmap-circle {
+  fill: #ffffff;
+  stroke: #666666;
+  stroke-width: 2;
+}
+.fs-railmap-tracks {
+  font-weight: 500;
+  fill: #666666;
+  text-anchor: middle;
+}
+.fs-station-railmap g.fs-railmap-insert {
+  stroke: #a852ff;
+  fill: white;
+}

@@ -2,10 +2,91 @@
     <h1 id="title">
         トラれぽ　路線制作ページ
     </h1>
-    <div id="routeMap">
-        ここにRouteMapをいれる。
-        <br/>RouteMapで選択された路線が今編集する路線として下に表示される。
-        <br/>Map中の駅の場所右クリックで路線に駅を追加できるようにする。
+</div>
+<!--スプリットデザイン参考はhttps://webdesignday.jp/inspiration/technique/css/3962/-->
+<div class="main">
+    <div class="main-left">
+        <div id="div1" onContextmenu="return false;"></div>
     </div>
+    <div class="main-right">
+        <div *ngIf="route.isNull()" id="routeIsNull">
+            路線が選択されていません。
+            <div>
+                <button (click)="makeNewRoute()">路線の新規作成</button>
+            </div>
+
+        </div>
+        <div *ngIf="!route.isNull()" id="editRoute">
+            <h2 id="stationName">{{route.name}} の編集</h2>
+            <div>
+                <div>
+                    <label>路線ID:
+                        <input type="text"  disabled [value]="route.id"/>
+                    </label>
+                </div>
+                <div>
+                    <label>路線名:
+                        <input type="text" [(ngModel)]="route.name" placeholder="name"/>
+                    </label>
+                </div>
+                <div>
+                    <label>路線タイプ:
+                        <select [(ngModel)]="route.routeType">
+                            <option value="0">高速鉄道</option>
+                            <option value="1">鉄道</option>
+                            <option value="2">地下鉄</option>
+                            <option value="3">市電</option>
+                            <option value="4">ケーブルカー</option>
+                            <option value="5">ロープウェイ</option>
+                            <option value="6">高速バス</option>
+                            <option value="7">路線バス</option>
+                            <option value="8">コミュニティバス</option>
+                            <option value="9">航路</option>
+                            <option value="10">渡し舟</option>
+                            <option value="11">空路</option>
+                            <option value="12">その他</option>
+                        </select>
+                    </label>
+                </div>
+                <div>
+                    <label>路線ナンバリング:
+                        <input type="text" [(ngModel)]="route.routeNo" />
+                    </label>
+                </div>
+                <div>
+                    <label>路線説明:
+                        <input type="text" [(ngModel)]="route.description" />
+                    </label>
+                </div>
+                <div>
+                    <button (click)="deleteRoute()">路線の削除</button>
+                </div>
+                <div>
+                    <button (click)="makeNewRoute()">路線の新規作成</button>
+                </div>
+            </div>
+            <h3>停車駅の設定</h3>
+            <svg id="stations" class="fs-station-railmap" [attr.height]="56*stationData.length+100" (mousemove)="railmapMouseMove($event)">
+                <g *ngFor="let station of stationData.slice(0,stationData.length-1)">
+                    <line class="fs-railmap-line" [attr.x1]="84" [attr.x2]="84" [attr.y1]="station.y1" [attr.y2]="station.y2"></line>
+                </g>
+                <g *ngFor="let station of stationData">
+                    <text (click)="deleteStation(station.station)" class="" x="14" [attr.y]="station.y1+4">削除</text>
+                    <text class="fs-railmap-station" x="104" [attr.y]="station.y1+4">{{station.station.name}}</text>
+                    <circle class="fs-railmap-circle" cx="84" [attr.cy]="station.y1" r="12"></circle>
+                    <text class="fs-railmap-tracks" x="84" [attr.y]="station.y1+4"></text>
+                </g>
+                <g *ngIf="showInsertStation" (click)="addStation()" class="fs-railmap-insert" [attr.transform]="transformY()">
+                    <line x1="0" x2="300" y1="0.5" y2="0" stroke-dasharray="2 1"></line>
+                    <circle  cx="84" cy="0" r="8"></circle><path d="M84 -4 l0 8m-4 -4l 8 0"></path>
+                </g>
+            </svg>
+        </div>
+    </div>
+</div>
+<div>
+    <h3>開発者メモ</h3>
+    agencyを作っていないかったので、routeを編集なのにAgency設定がありません。
+    Agencyはセレクトボックスで指定できそうだけど、Agencyの数が増えることも考えると検索機能必須かな。
 </div>
 
