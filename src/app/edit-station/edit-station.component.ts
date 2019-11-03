@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { StationService } from './station.service';
-import {Station} from '../../lib/Station';
+import {Station} from '../../lib/JPTI/Station';
 declare function f_busmap(value:any):any;
 declare function getPos():any;
 declare const window: any;

@@ -81,7 +81,7 @@ export class Route{
     /**
      * The stations that make up this route
      */
-    public stations:Array<Station>=[];
+    public stations:Array<RouteStation>=[];
 
     public loadFromJSON(value:JSON){
         this._id=value["id"];
@@ -89,12 +89,12 @@ export class Route{
         this.color=value["color"];
         for(var i=0; i<value["stationList"].length;i++){
             const j=i;
-            this.stations.push(new Station());
+            this.stations.push(new RouteStation());
             const req = new XMLHttpRequest();
             req.onreadystatechange = () =>{
                 if(req.readyState == 4 && req.status == 200){
                     const responce=JSON.parse(req.response);
-                    this.stations[j].loadFromJSON(responce);
+                    this.stations[j].station.loadFromJSON(responce);
                 }
             };
             req.open("GET", "https://kamelong.com/nodeJS/api/station?stationID="+value["stationList"][j], true);
@@ -109,10 +109,12 @@ export class Route{
         return this.id.length==0;
 
     }
-
-
-
-
-
+}
+export class RouteStation{
+  private _id:string=UUID();
+  get id():string{
+    return this._id;
+  }
+  public station:Station=new Station();
 
 }

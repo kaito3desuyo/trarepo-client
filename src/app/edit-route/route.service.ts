@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {Route} from '../../lib/Route';
+import {Route} from '../../lib/JPTI/Route';
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {Station} from "../../lib/Station";
+import {Station} from "../../lib/JPTI/Station";
 
 @Injectable({
   providedIn: 'root'

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {Station} from '../../lib/Station';
-import {Route} from '../../lib/Route';
+import {Station} from '../../lib/JPTI/Station';
+import {Route, RouteStation} from '../../lib/JPTI/Route';
 import {RouteService} from './route.service';
 import {init} from "protractor/built/launcher";
 import {StationService} from "../edit-station/station.service";
@@ -87,8 +87,8 @@ export class EditRouteComponent implements OnInit {
       req.onreadystatechange = () =>{
         if(req.readyState == 4 && req.status == 200){
           const responce=JSON.parse(req.response);
-          const station=new Station();
-          station.loadFromJSON(responce);
+          const station=new RouteStation();
+          station.station.loadFromJSON(responce);
           this.route.stations.splice(this.posInsertStation,0,station);
           this.posInsertStation++;
           this.init();
@@ -103,7 +103,7 @@ export class EditRouteComponent implements OnInit {
   /**
    * 路線から駅を削除する
    */
-  private deleteStation(station:Station){
+  private deleteStation(station:RouteStation){
     const index=this.route.stations.indexOf(station);
     if(index>this.posInsertStation){
       this.posInsertStation--;
@@ -127,5 +127,5 @@ export class EditRouteComponent implements OnInit {
 class StationData{
   public y1=0;
   public y2=0;
-  public station:Station=new Station();
+  public station:RouteStation=new RouteStation();
 }

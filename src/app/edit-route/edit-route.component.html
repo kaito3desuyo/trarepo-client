@@ -72,7 +72,7 @@
                 </g>
                 <g *ngFor="let station of stationData">
                     <text (click)="deleteStation(station.station)" class="" x="14" [attr.y]="station.y1+4">削除</text>
-                    <text class="fs-railmap-station" x="104" [attr.y]="station.y1+4">{{station.station.name}}</text>
+                    <text class="fs-railmap-station" x="104" [attr.y]="station.y1+4">{{station.station.station.name}}</text>
                     <circle class="fs-railmap-circle" cx="84" [attr.cy]="station.y1" r="12"></circle>
                     <text class="fs-railmap-tracks" x="84" [attr.y]="station.y1+4"></text>
                 </g>

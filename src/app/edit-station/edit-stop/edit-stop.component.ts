@@ -1,5 +1,5 @@
 import { Component, OnInit,Input } from '@angular/core';
-import {Stop} from '../../../lib/Stop';
+import {Stop} from '../../../lib/JPTI/Stop';
 @Component({
   selector: 'app-edit-stop',
   templateUrl: './edit-stop.component.html',
