@@ -60,7 +60,6 @@ async function f_busmap(a_settings) {
     //XHR
     const c_data = [{}];
     //GTFSの場合、ZIPの解凍
-    console.log(c_input_settings);
     if (c_input_settings["data_type"] === "gtfs") {
         const c_response = await f_zip_to_text(c_input_settings["data"]);
         //c_responseに取得したデータがある
@@ -75,31 +74,37 @@ async function f_busmap(a_settings) {
         }
     } else if (c_input_settings["data_type"] === "json" || c_input_settings["data_type"] === "geojson" || c_input_settings["data_type"] === "topojson" || c_input_settings["data_type"] === "api") {
         c_data[0] = JSON.parse((await f_xhr_get(c_input_settings["data"], "text")).responseText);
-        console.log(c_data[0]);
         if (c_input_settings["data_type"] === "topojson") {
             c_data[0] = f_topojson_to_geojson(c_data[0]);
             c_data[0] = f_from_geojson(c_data[0]["stops"]["features"], c_data[0]["ur_routes"]["features"]);
         }
-        console.log(c_data[0]);
         if (c_input_settings["data_type"] === "geojson") {
             c_data[0] = f_geojson_to_json(c_data[0]);
         }
         if (c_input_settings["data_type"] === "api") {
             c_data[0] = f_from_api(c_data[0]);
         }
-        console.log(c_data[0]);
     }
     //準備
     for (let i1 = 0; i1 < c_data.length; i1++) {
-        console.log(c_data);
         if (c_data[i1]["stop_times"] === undefined) {//json由来
             f_prepare_json(c_data[i1]);
         } else {//gtfs由来
             f_prepare_gtfs(c_data[i1]);
         }
     }
+    //stopは変化なし
+    //routeのstop_idに加えstop_number追加
+    //shape_pt_arrayの内部追加
+
     //c_bmdに移す
     f_make_bmd(c_data, c_bmd);
+    /**
+     * stopにloationtypeが追加される
+     * stopが二回繰り返されている。
+     * routeが削除される
+     *ur_routeは同じ
+     */
     //f_prepare_common(a_data[0]);
     //f_next_2(c_bmd, c_input_settings);//ここから仮につなげる
     if (c_input_settings["change"] === true) {
@@ -108,16 +113,32 @@ async function f_busmap(a_settings) {
     }
     console.time("t_5");
     f_make_shape_points(c_bmd);
+    /**
+     *shape_pt_number追加
+     *shape_points追加
+     */
     console.timeEnd("t_5");
     console.time("t_6");
     f_set_xy(c_bmd, c_input_settings["zoom_level"]); //shape_pointsとstopsに座標xyを加える。
+    /**
+     * shape_pt_x
+     *shape_pt_y
+     */
     console.timeEnd("t_6");
     console.time("t_7");
     f_make_shape_segments(c_bmd);
+    /**
+     * shape_segment_array追加
+     * shape_segments追加
+     */
+    console.log(JSON.stringify(c_bmd));
+
     console.timeEnd("t_7");
     console.time("t_8");
     //仮に停止している
     f_delete_point(c_bmd); //余計なshape pointを消す。
+    console.log(JSON.stringify(c_bmd));
+
     console.timeEnd("t_8");
     console.time("t_9");
     f_make_shape_segments(c_bmd);
@@ -642,18 +663,7 @@ function f_prepare_json(a_data) {
             }
         }
     }
-    //trip_number関係（一部データとの互換性）
-    for (let i1 = 0; i1 < a_data["calendar"].length; i1++) {
-        a_data["calendar"][i1]["monday"] = String(a_data["calendar"][i1]["monday"]);
-        a_data["calendar"][i1]["tuesday"] = String(a_data["calendar"][i1]["tuesday"]);
-        a_data["calendar"][i1]["wednesday"] = String(a_data["calendar"][i1]["wednesday"]);
-        a_data["calendar"][i1]["thursday"] = String(a_data["calendar"][i1]["thursday"]);
-        a_data["calendar"][i1]["friday"] = String(a_data["calendar"][i1]["friday"]);
-        a_data["calendar"][i1]["saturday"] = String(a_data["calendar"][i1]["saturday"]);
-        a_data["calendar"][i1]["sunday"] = String(a_data["calendar"][i1]["synday"]);//仮
-        a_data["calendar"][i1]["sunday"] = String(a_data["calendar"][i1]["sonday"]);//仮
-        a_data["calendar"][i1]["sunday"] = String(a_data["calendar"][i1]["sunday"]);
-    }
+
     //shape補完
     for (let i1 = 0; i1 < a_data["ur_routes"].length; i1++) {
         if (a_data["ur_routes"][i1]["shape_pt_array"].length !== 0) {
