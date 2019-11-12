@@ -7,13 +7,15 @@ import { EditStationComponent } from './edit-station/edit-station.component';
 import {FormsModule} from '@angular/forms';
 import { EditStopComponent } from './edit-station/edit-stop/edit-stop.component';
 import { EditRouteComponent } from './edit-route/edit-route.component';
+import { RoutemapComponent } from './routemap/routemap.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     EditStationComponent,
     EditStopComponent,
-    EditRouteComponent
+    EditRouteComponent,
+    RoutemapComponent
   ],
   imports: [
     BrowserModule,
