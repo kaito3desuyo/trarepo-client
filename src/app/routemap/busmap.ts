@@ -75,6 +75,7 @@ function f_offset_polyline(a_data:KLAPI, a_zoom_ratio:number) { //a_zoom_ratio�
 		c_station_xy[i1].y = f_lat_to_y(a_data.station[i1].lat, null);
 	}
 	//折れ線の線分の列c_segment_arraysを作る
+	//keyはrouteID
 	const c_segment_arrays :{[key:string]:Segment[]}= {};
 	for (let i1 in a_data.route) {
 		c_segment_arrays[i1] = [];
@@ -84,8 +85,8 @@ function f_offset_polyline(a_data:KLAPI, a_zoom_ratio:number) { //a_zoom_ratio�
 			const segment=new Segment();
 			segment.sid=c_sid;
 			segment.eid=c_eid;
-			segment.sids=[c_sid];
-			segment.eids=[c_eid];
+			// segment.sids=[c_sid];
+			// segment.eids=[c_eid];
 			segment.sx=c_station_xy[c_sid].x;
 			segment.sy=c_station_xy[c_sid].y;
 			segment.ex=c_station_xy[c_eid].x;
@@ -99,6 +100,7 @@ function f_offset_polyline(a_data:KLAPI, a_zoom_ratio:number) { //a_zoom_ratio�
 	}
 	
 	//線分をc_segmentsに集める
+	//keyはsegmentのsidとeidの組み合わせ
 	const c_segments:{[key:string]:SegmentList} = {};
 	for (let i1 in c_segment_arrays) {
 		for (let i2 = 0; i2 < c_segment_arrays[i1].length; i2++) {
@@ -135,14 +137,14 @@ function f_offset_polyline(a_data:KLAPI, a_zoom_ratio:number) { //a_zoom_ratio�
 		}
 	}
 	//オフセット幅zを設定
-	for (let i1 in c_segments) {
-		let l_z = (-1) * (c_segments[i1].number - 1) * 0.5;
-		for (let i2 in c_segments[i1].segments) {
+	for (let segSetKey in c_segments) {
+		let l_z = (-1) * (c_segments[segSetKey].number - 1) * 0.5;
+		for (let i2 in c_segments[segSetKey].segments) {
 			if (i2 !== "number") {
-				if (c_segments[i1].segments[i2].direction === 1) {
-					c_segments[i1].segments[i2].z = l_z * a_zoom_ratio;
-				} else if (c_segments[i1].segments[i2].direction === -1) {
-					c_segments[i1].segments[i2].z = (-1) * l_z * a_zoom_ratio;
+				if (c_segments[segSetKey].segments[i2].direction === 1) {
+					c_segments[segSetKey].segments[i2].z = l_z * a_zoom_ratio;
+				} else if (c_segments[segSetKey].segments[i2].direction === -1) {
+					c_segments[segSetKey].segments[i2].z = (-1) * l_z * a_zoom_ratio;
 				}
 				l_z += 1;
 			}
@@ -150,76 +152,76 @@ function f_offset_polyline(a_data:KLAPI, a_zoom_ratio:number) { //a_zoom_ratio�
 	}
 	
 	//オフセット幅zをc_segment_arraysに入れる
-	for (let i1 in c_segment_arrays) {
-		for (let i2 = 0; i2 < c_segment_arrays[i1].length; i2++) {
-			const c_segment = c_segment_arrays[i1][i2];
+	for (let routeID in c_segment_arrays) {
+		for (let segmentIndex = 0; segmentIndex < c_segment_arrays[routeID].length; segmentIndex++) {
+			const c_segment:Segment = c_segment_arrays[routeID][segmentIndex];
 			const c_segment_key_1 = "segment_" + c_segment.sid + "_" + c_segment.eid;
 			const c_segment_key_2 = "segment_" + c_segment.eid + "_" + c_segment.sid;
 			if (c_segments[c_segment_key_1] !== undefined) {
-				if (c_segments[c_segment_key_1].segments[i1] !== undefined) {
-					c_segment.z = c_segments[c_segment_key_1].segments[i1].z;
-				} else if (c_segments[c_segment_key_2].segments[i1] !== undefined) {
-					c_segment.z = c_segments[c_segment_key_2].segments[i1].z;
+				if (c_segments[c_segment_key_1].segments[routeID] !== undefined) {
+					c_segment.z = c_segments[c_segment_key_1].segments[routeID].z;
+				} else if (c_segments[c_segment_key_2].segments[routeID] !== undefined) {
+					c_segment.z = c_segments[c_segment_key_2].segments[routeID].z;
 				}
 			} else {
-				c_segment.z = c_segments[c_segment_key_2].segments[i1].z;
+				c_segment.z = c_segments[c_segment_key_2].segments[routeID].z;
 			}
 			
 		}
 	}
 	//オフセットした線を作る
 	const c_polylines :{[key:string]:PolyLine[]}= {};
-	for (let i1 in c_segment_arrays) {
-		f_offset_segment_array(c_segment_arrays[i1]);
+	for (let routeID in c_segment_arrays) {
+		f_offset_segment_array(c_segment_arrays[routeID]);
 		//折れ線に変換する
-		c_polylines[i1] = [];
-		for (let i2 = 0; i2 < c_segment_arrays[i1][0].sxy.length; i2++) {
+		c_polylines[routeID] = [];
+		for (let i2 = 0; i2 < c_segment_arrays[routeID][0].sxy.length; i2++) {
 			const polyLine=new PolyLine();
-			polyLine.x= c_segment_arrays[i1][0].sxy[i2].x;
-			polyLine.y=  c_segment_arrays[i1][0].sxy[i2].y;
-			c_polylines[i1].push(polyLine);
-			if (c_segment_arrays[i1][0].sxy.length === 3) {
-				c_polylines[i1][c_polylines[i1].length - 2].ids = c_segment_arrays[i1][0].sids;
+			polyLine.x= c_segment_arrays[routeID][0].sxy[i2].x;
+			polyLine.y=  c_segment_arrays[routeID][0].sxy[i2].y;
+			c_polylines[routeID].push(polyLine);
+			if (c_segment_arrays[routeID][0].sxy.length === 3) {
+				c_polylines[routeID][c_polylines[routeID].length - 2].ids = [c_segment_arrays[routeID][0].sid];
 			} else {
-				c_polylines[i1][c_polylines[i1].length - 1].ids = c_segment_arrays[i1][0].sids;
+				c_polylines[routeID][c_polylines[routeID].length - 1].ids = [c_segment_arrays[routeID][0].sid];
 			}
 		}
-		for (let i2 = 0; i2 < c_segment_arrays[i1].length; i2++) {
+		for (let i2 = 0; i2 < c_segment_arrays[routeID].length; i2++) {
 
-			for (let i3 = 0; i3 < c_segment_arrays[i1][i2]["exy"].length; i3++) {
+			for (let i3 = 0; i3 < c_segment_arrays[routeID][i2].exy.length; i3++) {
 				const polyLine=new PolyLine();
-				polyLine.x=  c_segment_arrays[i1][i2]["exy"][i3].x;
-				polyLine.y=   c_segment_arrays[i1][i2]["exy"][i3].y;
-				c_polylines[i1].push(polyLine);
-				if (c_segment_arrays[i1][i2]["exy"].length === 3) {
-					c_polylines[i1][c_polylines[i1].length - 2].ids = c_segment_arrays[i1][i2].eids;
+				polyLine.x=  c_segment_arrays[routeID][i2].exy[i3].x;
+				polyLine.y=   c_segment_arrays[routeID][i2].exy[i3].y;
+				c_polylines[routeID].push(polyLine);
+				if (c_segment_arrays[routeID][i2].exy.length === 3) {
+					c_polylines[routeID][c_polylines[routeID].length - 2].ids = [c_segment_arrays[routeID][i2].eid];
 				} else {
-					c_polylines[i1][c_polylines[i1].length - 1].ids = c_segment_arrays[i1][i2].eids;
+					c_polylines[routeID][c_polylines[routeID].length - 1].ids = [c_segment_arrays[routeID][i2].eid];
 				}
 			}
 		}
 		//xyを緯度経度に変換する
-		for (let i2 = 0; i2 < c_polylines[i1].length; i2++) {
-			c_polylines[i1][i2].lon = f_x_to_lon(c_polylines[i1][i2].x,null);
-			c_polylines[i1][i2].lat = f_y_to_lat(c_polylines[i1][i2].y,null);
+		for (let i2 = 0; i2 < c_polylines[routeID].length; i2++) {
+			c_polylines[routeID][i2].lon = f_x_to_lon(c_polylines[routeID][i2].x,null);
+			c_polylines[routeID][i2].lat = f_y_to_lat(c_polylines[routeID][i2].y,null);
 		}
 
 
 		//折れ線
-		a_data.route[i1].polyline = [];
-		for (let i2 = 0; i2 < c_polylines[i1].length; i2++) {
-			const latlng=new LatLng(c_polylines[i1][i2].lat,c_polylines[i1][i2].lon);
-			a_data.route[i1].polyline.push(latlng);
+		a_data.route[routeID].polyline = [];
+		for (let i2 = 0; i2 < c_polylines[routeID].length; i2++) {
+			const latlng=new LatLng(c_polylines[routeID][i2].lat,c_polylines[routeID][i2].lon);
+			a_data.route[routeID].polyline.push(latlng);
 		}
 		//点
-		a_data.route[i1].points = [];
-		for (let i2 = 0; i2 < c_polylines[i1].length; i2++) {
-			if (c_polylines[i1][i2].ids !== undefined) {
-				if (c_polylines[i1][i2].ids.length === 1) { //各点idは1つだけの前提（統合していないはず）
+		a_data.route[routeID].points = [];
+		for (let i2 = 0; i2 < c_polylines[routeID].length; i2++) {
+			if (c_polylines[routeID][i2].ids !== undefined) {
+				if (c_polylines[routeID][i2].ids.length === 1) { //各点idは1つだけの前提（統合していないはず）
 					const point=new Point2();
-					point.id=c_polylines[i1][i2].ids[0];
-					point.latlon=new LatLng(c_polylines[i1][i2].lat,c_polylines[i1][i2].lon);
-					a_data.route[i1].points.push(point);
+					point.id=c_polylines[routeID][i2].ids[0];
+					point.latlon=new LatLng(c_polylines[routeID][i2].lat,c_polylines[routeID][i2].lon);
+					a_data.route[routeID].points.push(point);
 				}
 			}
 		}

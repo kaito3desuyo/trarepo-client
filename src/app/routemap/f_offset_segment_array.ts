@@ -15,16 +15,13 @@ export function f_offset_segment_array(input:Segment[]) {
 	let segmentList = input;
 	f_offset_3(segmentList); //初回計算
 	let l_exist = false; //逆の順序が存在するときtrue、しないと仮定
-	let l_sids = []; //統合する点のidたち（始点側）
+	let l_sids:string =undefined; //統合する点のidたち（始点側）
 	while (0 < segmentList.length) { //無限ループ注意
 		l_exist = false;
-		l_sids = [];
-		const c_segments_2 = []; //残すsegment
+		l_sids = undefined;
+		const c_segments_2:Segment[] = []; //残すsegment
 		for (let i2 = 0; i2 < segmentList.length; i2++) {
-			//統合する点のidをまとめる。
-			for (let i3 = 0; i3 < segmentList[i2].sids.length; i3++) {
-				l_sids.push(segmentList[i2].sids[i3]);
-			}
+			l_sids=segmentList[i2].sid;
 			if ((0 < i2) && (i2 < segmentList.length - 1) //最初と最後は残すので除く
 				&& (segmentList[i2].st > segmentList[i2].et) //順序が逆
 				&& (segmentList[i2]["sn"] === false && segmentList[i2]["en"] === false) //残す指定なし
@@ -33,13 +30,13 @@ export function f_offset_segment_array(input:Segment[]) {
 			} else {
 				c_segments_2.push(segmentList[i2]);
 				if (i2 !== 0) {
-					c_segments_2[c_segments_2.length - 2].eids = l_sids;
+					c_segments_2[c_segments_2.length - 2].eid = l_sids;
 				}
-				c_segments_2[c_segments_2.length - 1].sids = l_sids;
+				c_segments_2[c_segments_2.length - 1].sid = l_sids;
 				if (i2 === segmentList.length - 1) {
-					c_segments_2[c_segments_2.length - 1].eids = segmentList[i2].eids;
+					c_segments_2[c_segments_2.length - 1].eid = segmentList[i2].eid;
 				}
-				l_sids = [];
+				l_sids =undefined ;
 			}
 		}
 		segmentList = c_segments_2; //代入して変える
@@ -47,6 +44,7 @@ export function f_offset_segment_array(input:Segment[]) {
 		if (l_exist === false) { //逆の順序が存在しなければ終了する。
 			break;
 		}
+
 	}
 	
 }
@@ -78,7 +76,7 @@ function f_offset_3(segmentList:Segment[]) {
 
 
 function f_offset_2(segment1:Segment, segment2:Segment) {
-	const c_segment_pair_key = "segment_pair_key_" + String(segment1.sx) + "_" + String(segment1.sy) + "_" + String(segment1.ex) + "_" + String(segment1.ey) + "_" + String(segment2.sx) + "_" + String(segment2.sy) + "_" + String(segment2.ex) + "_" + String(segment2.ey);
+//	const c_segment_pair_key = "segment_pair_key_" + String(segment1.sx) + "_" + String(segment1.sy) + "_" + String(segment1.ex) + "_" + String(segment1.ey) + "_" + String(segment2.sx) + "_" + String(segment2.sy) + "_" + String(segment2.ex) + "_" + String(segment2.ey);
 	
 	/*
 	if (c_segment_pairs[c_segment_pair_key] === undefined) {
@@ -92,15 +90,21 @@ function f_offset_2(segment1:Segment, segment2:Segment) {
 	//ずらし幅
 	const c_s1z = segment1.z;
 	const c_s2z = segment2.z;
-	segment1.et = c_s1z * c_z.d1t[0] + c_s2z * c_z.d1t[1] + c_z.d1t[2];
-	segment2.st = c_s1z * c_z.d2t[0] + c_s2z * c_z.d2t[1] + c_z.d2t[2];
+	 segment1.et = c_s1z * c_z.d1t[0] + c_s2z * c_z.d1t[1] + c_z.d1t[2];
+	 segment2.st = c_s1z * c_z.d2t[0] + c_s2z * c_z.d2t[1] + c_z.d2t[2];
 	
 	//以下は後でまとめてもよい？
 	const c_xy :Point[]= [];
-	for (let i1 = 0; i1 < c_z["xy"].length; i1++) {
-		c_xy.push(new Point( c_s1z * c_z["xy"][i1].x[0] + c_s2z * c_z["xy"][i1].x[1] + c_z["xy"][i1].x[2], c_s1z * c_z["xy"][i1].y[0] + c_s2z * c_z["xy"][i1].y[1] + c_z["xy"][i1].y[2]));
+	//kamelong変更部分　c_xyに最初の要素しか入れない
+	// for (let i1 = 0; i1 < c_z.xy.length; i1++) {
+	// 	c_xy.push(new Point( c_s1z * c_z.xy[i1].x[0] + c_s2z * c_z.xy[i1].x[1] + c_z.xy[i1].x[2], c_s1z * c_z.xy[i1].y[0] + c_s2z * c_z.xy[i1].y[1] + c_z.xy[i1].y[2]));
+	// }
+	for (let i1 = 0; i1 < 1; i1++) {
+		 c_xy.push(new Point( c_s1z * c_z.xy[i1].x[0] + c_s2z * c_z.xy[i1].x[1] + c_z.xy[i1].x[2], c_s1z * c_z.xy[i1].y[0] + c_s2z * c_z.xy[i1].y[1] + c_z.xy[i1].y[2]));
 	}
-	segment1.exy = c_xy;
+	// segment1.exy = c_xy;
+	// segment2.sxy = c_xy;
+	segment1.exy =c_xy;
 	segment2.sxy = c_xy;
 }
 
@@ -114,104 +118,117 @@ function f_offset_2(segment1:Segment, segment2:Segment) {
 
 function f_offset(segment1:Segment, segment2:Segment) :Offset{
 	let l_parallel = false;
-	const c_p1x = segment1.sx;
-	const c_p1y = segment1.sy;
-	const c_p2x = segment1.ex;
-	const c_p2y = segment1.ey;
-	const c_p3x = segment2.sx;
-	const c_p3y = segment2.sy;
-	const c_p4x = segment2.ex;
-	const c_p4y = segment2.ey;
+	const p11x = segment1.sx;
+	const p11y = segment1.sy;
+	const p12x = segment1.ex;
+	const p12y = segment1.ey;
+	const p21x = segment2.sx;
+	const p21y = segment2.sy;
+	const p22x = segment2.ex;
+	const p22y = segment2.ey;
 	//有向線分がなすベクトルのx成分とy成分と大きさ（ユークリッドノルム）を計算する
-	const c_v1x = c_p2x - c_p1x;
-	const c_v1y = c_p2y - c_p1y;
-	const c_v1n = ((c_v1x * c_v1x) + (c_v1y * c_v1y)) ** 0.5;
-	const c_v2x = c_p4x - c_p3x;
-	const c_v2y = c_p4y - c_p3y;
-	const c_v2n = ((c_v2x * c_v2x) + (c_v2y * c_v2y)) ** 0.5;
+	const v1x = p12x - p11x;
+	const v1y = p12y - p11y;
+	const v1r = ((v1x * v1x) + (v1y * v1y)) ** 0.5;
+	const v2x = p22x - p21x;
+	const v2y = p22y - p21y;
+	const v2r = ((v2x * v2x) + (v2y * v2y)) ** 0.5;
 	//正弦と余弦？も計算する
 	//左手系に注意？
-	const c_v1xn = (-1) * c_v1x / c_v1n;
-	const c_v1yn = c_v1y / c_v1n;
-	const c_v2xn = (-1) * c_v2x / c_v2n;
-	const c_v2yn = c_v2y / c_v2n;
+	// const v1cos = (-1) * v1x / v1r;
+	// const v1sin = v1y / v1r;
+	// const v2cos = (-1) * v2x / v2r;
+	// const v2sin = v2y / v2r;
 	
 	//少なくとも1つが点だとうまくいかないので確認する
-	if ((c_p1x === c_p2x && c_p1y === c_p2y) || (c_p3x === c_p4x && c_p3y === c_p4y)) {
+	if ((p11x === p12x && p11y === p12y) || (p21x === p22x && p21y === p22y)) {
 		console.log("点あり");
 	}
 	//2つの有向線分が同一だとうまくいかないので確認する（向きが逆ならよい）
-	if (c_p1x === c_p3x && c_p1y === c_p3y && c_p2x === c_p4x && c_p2y === c_p4y) {
+	if (p11x === p21x && p11y === p21y && p12x === p22x && p12y === p22y) {
 		console.log("同一");
 	}
 	//平行を確認する
-	if ((c_p2x - c_p1x) * (c_p4y - c_p3y) === (c_p2y - c_p1y) * (c_p4x - c_p3x)) {
+	if ((p12x - p11x) * (p22y - p21y) === (p12y - p11y) * (p22x - p21x)) {
 		console.log("平行");
 		l_parallel = true;
 	}
 	
 	//交点を求める
-	let l_pc;
+	let crossPoint:CrossPont;
 	if (l_parallel === false) { //平行でないとき（交点あり）
-		l_pc = f_cross_point(c_p1x, c_p1y, c_p2x, c_p2y, c_p3x, c_p3y, c_p4x, c_p4y);
+
+		crossPoint = f_cross_point(p11x, p11y, p12x, p12y, p21x, p21y, p22x, p22y);
 	} else { //平行なとき（交点なし、p2とp3の中点をとる）
-		l_pc = {"x": (c_p2x + c_p3x) * 0.5, "y": (c_p2y + c_p3y) * 0.5};
+		crossPoint=new CrossPont();
+		crossPoint.x=(p12x + p21x) * 0.5;
+		crossPoint.y=(p12y + p21y) * 0.5;
+		crossPoint.parallel=true;
 	}
-	const c_pcx = l_pc.x;
-	const c_pcy = l_pc.y;
+//	const c_pcx = crossPoint.x;
+//	const c_pcy = crossPoint.y;
 	
 	//各有向線分に対する交点の相対的な位置
 	//有向線分1の始点p1を-1、終点p2を0としたときの交点の位置
-	// const c_d1x = c_pcx - c_p2x;
-	// const c_d1y = c_pcy - c_p2y;
-	let l_d1t;
-	if (c_p2x !== c_p1x) { //y軸に平行でない
-		l_d1t = (c_pcx - c_p2x) / (c_p2x - c_p1x);
-	} else if (c_p2y !== c_p1y) { //x軸に平行でない
-		l_d1t = (c_pcy - c_p2y) / (c_p2y - c_p1y);
-	} else {
-		console.log("？");
-	}
+	// const c_d1x = c_pcx - p12x;
+	// const c_d1y = c_pcy - p12y;
+	// let l_d1t=0;
+	// if (p12x !== p11x) { //y軸に平行でない
+	// 	l_d1t = (crossPoint.x - p12x) / (p12x - p11x);
+	// } else if (p12y !== p11y) { //x軸に平行でない
+	// 	l_d1t = (crossPoint.y - p12y) / (p12y - p11y);
+	// } else {
+	// 	console.log("？");
+	// }
 	//有向線分2の始点p3を0、終点p4を1としたときの交点の位置
-	// const c_d2x = c_pcx - c_p3x;
-	// const c_d2y = c_pcy - c_p3y;
-	let l_d2t;
-	if (c_p4x !== c_p4x) { //y軸に平行でない
-		l_d2t = (c_pcx - c_p3x) / (c_p4x - c_p3x);
-	} else if (c_p4y !== c_p3y) { //x軸に平行でない
-		l_d2t = (c_pcy - c_p3y) / (c_p4y - c_p3y);
-	} else {
-		console.log("？");
-	}
+	// const c_d2x = c_pcx - p21x;
+	// const c_d2y = c_pcy - p21y;
+	// let l_d2t=0;
+	// if (p22x !== p21x) { //y軸に平行でない
+	// 	l_d2t = (crossPoint.x - p21x) / (p22x - p21x);
+	// } else if (p22y !== p21y) { //x軸に平行でない
+	// 	l_d2t = (crossPoint.y - p21y) / (p22y - p21y);
+	// } else {
+	// 	console.log("？");
+	// }
 	
-	if (c_v1n < 0.01 || c_v2n < 0.01) { ////大きさが十分小さいとき
+	if (v1r < 0.01 || v2r < 0.01) { ////大きさが十分小さいとき
 		//console.log("大きさが小さいので注意"); //例外処置、未完成
 	}
 	
-	const c_xxyy = c_v1x * c_v2x + c_v1y * c_v2y;
-	const c_xyxy= c_v1x * c_v2y - c_v2x * c_v1y; //平行のとき0
-	const c_xyxynn = c_xyxy / (c_v1n * c_v2n); //大きさをそろえる
-	const c_yxyx = 1 / c_xyxy;
+	// const c_xxyy = v1x * v2x + v1y * v2y;
+	// const c_xyxy= v1x * v2y - v2x * v1y; //平行のとき0
+	// const c_xyxynn = c_xyxy / (v1r * v2r); //大きさをそろえる
+	// const c_yxyx = 1 / c_xyxy;
 	
 	//d1tはずらし幅z1、z2のとき、z1 * d1t[0] + z2 * d1t[1] + d1t[2]の値
 	
-	if (Math.abs(c_xyxynn) < 0.1) { //平行に近い
-		const offset=new Offset();
-		offset.d1t=[0, 0, 1];
-		offset.d2t=[0, 0, 0];
-		offset.xy.push(new Point3([c_v1yn, 0, c_p2x],[c_v1xn, 0, c_p2y]));
-		offset.xy.push(new Point3([c_v1yn * 0.5, c_v2yn * 0.5, (c_p2x + c_p3x) * 0.5],[c_v1xn * 0.5, c_v2xn * 0.5, (c_p2y + c_p3y) * 0.5]));
-		offset.xy.push(new Point3([0, c_v2yn, c_p3x],[0, c_v2xn, c_p3y]));
-		return offset;
-	}
+	// if (Math.abs(c_xyxynn) < 0) { //平行に近い
+	// 	const offset=new Offset();
+	// 	offset.d1t=[0, 0, 1];
+	// 	offset.d2t=[0, 0, 0];
+	// 	offset.xy.push(new Point3([v1sin, 0, p12x],[v1cos, 0, p12y]));
+	// 	offset.xy.push(new Point3([v1sin * 0.5, v2sin * 0.5, (p12x + p21x) * 0.5],[v1cos * 0.5, v2cos * 0.5, (p12y + p21y) * 0.5]));
+	// 	offset.xy.push(new Point3([0, v2sin, p21x],[0, v2cos, p21y]));
+	// 	return offset;
+	// }
+
+
 	//p2とp3が同じで、折り返し（p1とp4が同じ）の場合は角を丸めたいが、場合分けを省略
 	//p2とp3が同じで、標柱で切断した点の場合、場合分けを省略
 	//p2とp3が同じで、オフセット幅が同じなら1点で曲げたいが、場合分けを省略
 	//p2とp3が同じ場合、場合分けを省略
 	const offset=new Offset();
-	offset.d1t= [(-1) * c_yxyx * c_xxyy / c_v1n, c_yxyx * c_v2n, 1 + l_d1t];
-	offset.d2t= [(-1) * c_yxyx * c_v1n, c_yxyx * c_xxyy / c_v2n, l_d2t];
-	offset.xy.push(new Point3([(-1) * c_v1n * c_v2x * c_yxyx, c_v2n * c_v1x * c_yxyx, c_pcx], [(-1) * c_v1n * c_v2y * c_yxyx, c_v2n * c_v1y * c_yxyx, c_pcy]));
+
+	offset.d1t=[0, 0, 1];
+	offset.d2t=[0, 0, 0];
+	const a=1/(v1r)+1/v2r;
+
+
+
+	// offset.d1t= [(-1) * c_yxyx * c_xxyy / v1r, c_yxyx * v2r, 1 + l_d1t];
+	// offset.d2t= [(-1) * c_yxyx * v1r, c_yxyx * c_xxyy / v2r, l_d2t];
+	offset.xy.push(new Point3([ v1y/v1r/v1r/a, v2y/v2r/v2r/a, crossPoint.x], [-v1x/v1r/v1r/a,-v2x/v2r/v2r/a, crossPoint.y]));
 	return offset;
 	
 	//曲線機能は停止

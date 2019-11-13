@@ -7,7 +7,7 @@ export class ApiStation{
     public lon:number=0;
 }
 export class ApiRoute{
-    public stationList:Array<string>=[];
+    public stationList:Array<string>=[];//stationのID
     public name:string="";
     public color:string="";
     public id:string="";
@@ -21,10 +21,10 @@ export class StationXY{
     public y=0;
 }
 export class Segment{
-    public sid="";
-    public eid="";
-    public sids:string[]=[];
-    public eids:string[]=[];
+    public sid="";//startStation ID
+    public eid="";//endStation ID
+    // public sids:string[]=[];
+    // public eids:string[]=[];
     public sx=0;
     public sy=0;
     public ex=0;
