@@ -16,7 +16,7 @@ export class EditStationComponent implements OnInit {
    * A station that is edited now.
    * When this is changed, current station info is saved and editor view is updated.
    */
-  private station:Station=null;
+  public station:Station=null;
 
   constructor(private stationService:StationService) { }
 

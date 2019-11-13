@@ -13,7 +13,7 @@ declare function setRouteCallback(value:any):any;
   styleUrls: ['./edit-route.component.scss']
 })
 export class EditRouteComponent implements OnInit {
-  private route:Route=null;
+  public route:Route=null;
   private stationData:Array<StationData>=[];
 
   private showInsertStation=false;

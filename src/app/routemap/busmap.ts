@@ -16,8 +16,8 @@ export async function f_busmap() {
 	L.svg().addTo(l_map); //svg地図を入れる。
 	l_map.setView([36, 135], 10); //初期表示位置
 	//データ読み込み
-	// const klAPI:KLAPI = await f_xhr_get("https://kamelong.com/nodeJS/api?minLat=34&maxLat=36&minLon=135&maxLon=136&zoomLevel=10", "json");
-	const klAPI:KLAPI = await f_xhr_get("https://kamelong.com/nodeJS/api?minLat=20&maxLat=50&minLon=120&maxLon=150&zoomLevel=10", "json");
+	const klAPI:KLAPI = await f_xhr_get("https://kamelong.com/nodeJS/api?minLat=34&maxLat=36&minLon=135&maxLon=136&zoomLevel=10", "json");
+	// const klAPI:KLAPI = await f_xhr_get("https://kamelong.com/nodeJS/api?minLat=20&maxLat=50&minLon=120&maxLon=150&zoomLevel=10", "json");
 
 	//色々調整
 	f_offset_polyline(klAPI,f_zoom_ratio(c_zoom_level));
@@ -36,7 +36,7 @@ export async function f_busmap() {
 	}
 	//駅名
 	for (let i1 in klAPI.station) {
-		// L.marker([klAPI.station[i1].lat, klAPI.station[i1].lon], {"icon": L.divIcon({"html": klAPI.station[i1]["name"], className: "className", iconSize: [256, 16], iconAnchor: [-4, -4]})}).addTo(l_map);
+		// L.marker([klAPI.station[i1].lat, klAPI.station[i1].lon], {"icon": L.divIcon({"html": klAPI.station[i1]["name"], className: "className", iconSize: [100, 16], iconAnchor: [-4, -4]})}).addTo(l_map);
 	}
 	f_zoom();
 
@@ -46,7 +46,10 @@ export async function f_busmap() {
 	//ズームレベル変更→オフセット再計算→leaflet変更
 	l_map.on("zoom", f_zoom);
 	function f_zoom() {
+		var time = performance.now();
 		f_offset_polyline(klAPI, f_zoom_ratio(l_map.getZoom()));
+		time = performance.now()-time;
+		console.log("f_offset_polyline:"+time);
 		//線
 		for (let i1 in klAPI.route) {
 			klAPI.route[i1].l_polyline.setLatLngs(klAPI.route[i1].polyline);

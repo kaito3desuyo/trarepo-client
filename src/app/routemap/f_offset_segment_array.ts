@@ -156,15 +156,15 @@ function f_offset(segment1:Segment, segment2:Segment) :Offset{
 	
 	//交点を求める
 	let crossPoint:CrossPont;
-	if (l_parallel === false) { //平行でないとき（交点あり）
-
-		crossPoint = f_cross_point(p11x, p11y, p12x, p12y, p21x, p21y, p22x, p22y);
-	} else { //平行なとき（交点なし、p2とp3の中点をとる）
+	// if (l_parallel === false) { //平行でないとき（交点あり）
+	//
+	// 	crossPoint = f_cross_point(p11x, p11y, p12x, p12y, p21x, p21y, p22x, p22y);
+	// } else { //平行なとき（交点なし、p2とp3の中点をとる）
 		crossPoint=new CrossPont();
 		crossPoint.x=(p12x + p21x) * 0.5;
 		crossPoint.y=(p12y + p21y) * 0.5;
-		crossPoint.parallel=true;
-	}
+		crossPoint.parallel=l_parallel;
+	// }
 //	const c_pcx = crossPoint.x;
 //	const c_pcy = crossPoint.y;
 	
@@ -192,9 +192,9 @@ function f_offset(segment1:Segment, segment2:Segment) :Offset{
 	// 	console.log("？");
 	// }
 	
-	if (v1r < 0.01 || v2r < 0.01) { ////大きさが十分小さいとき
-		//console.log("大きさが小さいので注意"); //例外処置、未完成
-	}
+	// if (v1r < 0.01 || v2r < 0.01) { ////大きさが十分小さいとき
+	// 	console.log("大きさが小さいので注意"); //例外処置、未完成
+	// }
 	
 	// const c_xxyy = v1x * v2x + v1y * v2y;
 	// const c_xyxy= v1x * v2y - v2x * v1y; //平行のとき0
