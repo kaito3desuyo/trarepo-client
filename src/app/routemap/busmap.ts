@@ -36,7 +36,7 @@ export async function f_busmap() {
 	}
 	//駅名
 	for (let i1 in klAPI.station) {
-		// L.marker([klAPI.station[i1].lat, klAPI.station[i1].lon], {"icon": L.divIcon({"html": klAPI.station[i1]["name"], className: "className", iconSize: [100, 16], iconAnchor: [-4, -4]})}).addTo(l_map);
+		 L.marker([klAPI.station[i1].lat, klAPI.station[i1].lon], {"icon": L.divIcon({"html": klAPI.station[i1]["name"], className: "className", iconSize: [100, 16], iconAnchor: [-4, -4]})}).addTo(l_map);
 	}
 	f_zoom();
 
