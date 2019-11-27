@@ -1,4 +1,4 @@
-import {CircleMarker, LatLng,  Polyline,Point} from "leaflet";
+import {CircleMarker, LatLng, Point} from "leaflet";
 
 export class ApiStation{
     public id:string="";
@@ -11,14 +11,18 @@ export class ApiRoute{
     public name:string="";
     public color:string="";
     public id:string="";
-    public l_polyline:Polyline=null;
-    public polyline:LatLng[]=[];
-    public l_points:CircleMarker[]=null;
-    public points:Point2[]=null;
+    // public l_polyline:Polyline=null;
+    // public polyline:LatLng[]=[];
+    // public l_points:CircleMarker[]=null;
+    // public points:Point2[]=null;
 }
 export class StationXY{
     public x=0;
     public y=0;
+    constructor(x:number,y:number){
+        this.x=x;
+        this.y=y;
+    }
 }
 export class Segment{
     public sid="";//startStation ID
@@ -65,7 +69,7 @@ export class PolyLine{
 }
 export class SegmentList{
     public segments:{[key:string]:SubSegment}={};
-    public number=0;
+     public number=0;
 }
 export class SubSegment{
     public id="";

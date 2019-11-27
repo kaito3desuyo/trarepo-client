@@ -28,6 +28,13 @@ export class Station{
     get id():string{
         return this._id;
     }
+
+    /**
+     * Deprecated function
+     */
+    public setID(id:string){
+        this._id=id;
+    }
     /**
      * Name of the station.
      * Not NULL.

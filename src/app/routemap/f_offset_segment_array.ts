@@ -10,9 +10,10 @@
 
 import {CrossPont, Offset, Point3, Segment} from "./a_hanyou";
 import {Point} from "leaflet";
+import {MapRoute} from "./busmap";
 
-export function f_offset_segment_array(input:Segment[]) {
-	let segmentList = input;
+export function f_offset_segment_array(route:MapRoute) {
+	let segmentList = route.segmentList;
 	f_offset_3(segmentList); //初回計算
 	let l_exist = false; //逆の順序が存在するときtrue、しないと仮定
 	let l_sids:string =undefined; //統合する点のidたち（始点側）

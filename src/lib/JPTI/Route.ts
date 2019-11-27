@@ -38,6 +38,12 @@ export class Route{
     }
 
     /**
+     * Deprecated function
+     */
+    public setID(id:string){
+        this._id=id;
+    }
+    /**
      * parent agency of the route.
      */
     public agency:any=null;

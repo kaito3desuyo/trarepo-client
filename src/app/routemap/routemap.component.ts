@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {f_busmap} from "./busmap";
+import {MapRoute, RouteMap} from "./busmap";
 
 @Component({
   selector: 'app-routemap',
@@ -12,7 +12,8 @@ export class RoutemapComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    f_busmap();
+    const routeMap=new RouteMap("div_leaflet");
+    routeMap.f_busmap();
   }
 
 }
