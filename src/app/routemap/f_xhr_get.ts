@@ -1,6 +1,8 @@
 import {ApiRoute, ApiStation} from "./a_hanyou";
-import {Station} from "../../lib/JPTI/Station";
-import {Route, RouteStation} from "../../lib/JPTI/Route";
+import {JPTI} from "../../lib/JPTI/JPTI";
+import Route = JPTI.Route;
+import Station = JPTI.Station;
+import RouteStation = JPTI.RouteStation;
 
 export class KLAPI {
 	public route:{[key:string]:ApiRoute}={};
@@ -46,7 +48,6 @@ export function f_xhr_get(a_url:string, a_type:XMLHttpRequestResponseType):Promi
 		c_xhr.responseType = a_type;
 		c_xhr.open("get", a_url);
 		c_xhr.onloadend = ()=>{
-			console.log(c_xhr);
 			if (c_xhr.status === 200) {
 				const res=c_xhr.response;
 				const kl=res as KLAPI;

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Station} from '../../lib/JPTI/Station';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
-import {Stop} from '../../lib/JPTI/Stop';
 import {__await} from "tslib";
+import {JPTI} from "../../lib/JPTI/JPTI";
+import Station = JPTI.Station;
+import Stop = JPTI.Stop;
 @Injectable({
   providedIn: 'root'
 })

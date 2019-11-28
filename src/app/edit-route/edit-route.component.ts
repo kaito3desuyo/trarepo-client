@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {Station} from '../../lib/JPTI/Station';
-import {Route, RouteStation} from '../../lib/JPTI/Route';
 import {RouteService} from './route.service';
-import {init} from "protractor/built/launcher";
 import {StationService} from "../edit-station/station.service";
+
+import {JPTI} from "../../lib/JPTI/JPTI";
+import Route = JPTI.Route;
+import RouteStation = JPTI.RouteStation;
 declare function f_busmap(value:any):any;
 declare function setStopCallback(value:any):any;
 declare function setRouteCallback(value:any):any;

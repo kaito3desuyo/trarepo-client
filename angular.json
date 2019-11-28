@@ -31,9 +31,7 @@
               "src/styles.scss",
               "src/lib/leaflet.css"
             ],
-            "scripts": [
-              "src/lib/leaflet.js",
-            "src/lib/busmap.js"]
+            "scripts":[]
           },
           "configurations": {
             "production": {

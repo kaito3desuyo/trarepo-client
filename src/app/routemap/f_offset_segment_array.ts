@@ -8,11 +8,13 @@
 
 
 
-import {CrossPont, Offset, Point3, Segment} from "./a_hanyou";
+import {Offset, Point3, Segment} from "./a_hanyou";
 import {Point} from "leaflet";
-import {MapRoute} from "./busmap";
+import {RouteMAP} from "./busmap";
+import Route = RouteMAP.Route;
 
-export function f_offset_segment_array(route:MapRoute) {
+export function f_offset_segment_array(route:Route) {
+	try{
 	let segmentList = route.segmentList;
 	f_offset_3(segmentList); //初回計算
 	let l_exist = false; //逆の順序が存在するときtrue、しないと仮定
@@ -46,6 +48,10 @@ export function f_offset_segment_array(route:MapRoute) {
 			break;
 		}
 
+	}
+	}catch (e) {
+		console.log(e);
+		console.log(route);
 	}
 	
 }
@@ -118,7 +124,6 @@ function f_offset_2(segment1:Segment, segment2:Segment) {
 //有向線分1のずらし幅をz1、有向線分2のずらし幅をz2とすると、出力は a × z1 + b × z2 + c の形になる。この[a, b, c]を出力すればよい。
 
 function f_offset(segment1:Segment, segment2:Segment) :Offset{
-	let l_parallel = false;
 	const p11x = segment1.sx;
 	const p11y = segment1.sy;
 	const p12x = segment1.ex;
@@ -134,130 +139,17 @@ function f_offset(segment1:Segment, segment2:Segment) :Offset{
 	const v2x = p22x - p21x;
 	const v2y = p22y - p21y;
 	const v2r = ((v2x * v2x) + (v2y * v2y)) ** 0.5;
-	//正弦と余弦？も計算する
-	//左手系に注意？
-	// const v1cos = (-1) * v1x / v1r;
-	// const v1sin = v1y / v1r;
-	// const v2cos = (-1) * v2x / v2r;
-	// const v2sin = v2y / v2r;
-	
-	//少なくとも1つが点だとうまくいかないので確認する
-	if ((p11x === p12x && p11y === p12y) || (p21x === p22x && p21y === p22y)) {
-		console.log("点あり");
-	}
-	//2つの有向線分が同一だとうまくいかないので確認する（向きが逆ならよい）
-	if (p11x === p21x && p11y === p21y && p12x === p22x && p12y === p22y) {
-		console.log("同一");
-	}
-	//平行を確認する
-	if ((p12x - p11x) * (p22y - p21y) === (p12y - p11y) * (p22x - p21x)) {
-		console.log("平行");
-		l_parallel = true;
-	}
-	
-	//交点を求める
-	let crossPoint:CrossPont;
-	// if (l_parallel === false) { //平行でないとき（交点あり）
-	//
-	// 	crossPoint = f_cross_point(p11x, p11y, p12x, p12y, p21x, p21y, p22x, p22y);
-	// } else { //平行なとき（交点なし、p2とp3の中点をとる）
-		crossPoint=new CrossPont();
-		crossPoint.x=(p12x + p21x) * 0.5;
-		crossPoint.y=(p12y + p21y) * 0.5;
-		crossPoint.parallel=l_parallel;
-	// }
-//	const c_pcx = crossPoint.x;
-//	const c_pcy = crossPoint.y;
-	
-	//各有向線分に対する交点の相対的な位置
-	//有向線分1の始点p1を-1、終点p2を0としたときの交点の位置
-	// const c_d1x = c_pcx - p12x;
-	// const c_d1y = c_pcy - p12y;
-	// let l_d1t=0;
-	// if (p12x !== p11x) { //y軸に平行でない
-	// 	l_d1t = (crossPoint.x - p12x) / (p12x - p11x);
-	// } else if (p12y !== p11y) { //x軸に平行でない
-	// 	l_d1t = (crossPoint.y - p12y) / (p12y - p11y);
-	// } else {
-	// 	console.log("？");
-	// }
-	//有向線分2の始点p3を0、終点p4を1としたときの交点の位置
-	// const c_d2x = c_pcx - p21x;
-	// const c_d2y = c_pcy - p21y;
-	// let l_d2t=0;
-	// if (p22x !== p21x) { //y軸に平行でない
-	// 	l_d2t = (crossPoint.x - p21x) / (p22x - p21x);
-	// } else if (p22y !== p21y) { //x軸に平行でない
-	// 	l_d2t = (crossPoint.y - p21y) / (p22y - p21y);
-	// } else {
-	// 	console.log("？");
-	// }
-	
-	// if (v1r < 0.01 || v2r < 0.01) { ////大きさが十分小さいとき
-	// 	console.log("大きさが小さいので注意"); //例外処置、未完成
-	// }
-	
-	// const c_xxyy = v1x * v2x + v1y * v2y;
-	// const c_xyxy= v1x * v2y - v2x * v1y; //平行のとき0
-	// const c_xyxynn = c_xyxy / (v1r * v2r); //大きさをそろえる
-	// const c_yxyx = 1 / c_xyxy;
-	
-	//d1tはずらし幅z1、z2のとき、z1 * d1t[0] + z2 * d1t[1] + d1t[2]の値
-	
-	// if (Math.abs(c_xyxynn) < 0) { //平行に近い
-	// 	const offset=new Offset();
-	// 	offset.d1t=[0, 0, 1];
-	// 	offset.d2t=[0, 0, 0];
-	// 	offset.xy.push(new Point3([v1sin, 0, p12x],[v1cos, 0, p12y]));
-	// 	offset.xy.push(new Point3([v1sin * 0.5, v2sin * 0.5, (p12x + p21x) * 0.5],[v1cos * 0.5, v2cos * 0.5, (p12y + p21y) * 0.5]));
-	// 	offset.xy.push(new Point3([0, v2sin, p21x],[0, v2cos, p21y]));
-	// 	return offset;
-	// }
 
 
-	//p2とp3が同じで、折り返し（p1とp4が同じ）の場合は角を丸めたいが、場合分けを省略
-	//p2とp3が同じで、標柱で切断した点の場合、場合分けを省略
-	//p2とp3が同じで、オフセット幅が同じなら1点で曲げたいが、場合分けを省略
-	//p2とp3が同じ場合、場合分けを省略
+	//無理やり路線を平行にする必要はないのでオフセット幅は適当に
 	const offset=new Offset();
 
 	offset.d1t=[0, 0, 1];
 	offset.d2t=[0, 0, 0];
 	const a=1/(v1r)+1/v2r;
 
-
-
-	// offset.d1t= [(-1) * c_yxyx * c_xxyy / v1r, c_yxyx * v2r, 1 + l_d1t];
-	// offset.d2t= [(-1) * c_yxyx * v1r, c_yxyx * c_xxyy / v2r, l_d2t];
-	offset.xy.push(new Point3([ v1y/v1r/v1r/a, v2y/v2r/v2r/a, crossPoint.x], [-v1x/v1r/v1r/a,-v2x/v2r/v2r/a, crossPoint.y]));
+	offset.xy.push(new Point3([ v1y/v1r/v1r/a, v2y/v2r/v2r/a, (p12x + p21x) * 0.5], [-v1x/v1r/v1r/a,-v2x/v2r/v2r/a,(p12y + p21y) * 0.5]));
 	return offset;
-	
-	//曲線機能は停止
-	
+
 }
 
-
-
-function f_cross_point(a_x1:number, a_y1:number, a_x2:number, a_y2:number, a_x3:number, a_y3:number, a_x4:number, a_y4:number):CrossPont{
-	const c_vy1 = a_y2 - a_y1;
-	const c_vx1 = a_x1 - a_x2;
-	const c_1 = -1 * c_vy1 * a_x1 - c_vx1 * a_y1;
-	const c_vy2 = a_y4 - a_y3;
-	const c_vx2 = a_x3 - a_x4;
-	const c_2 = -1 * c_vy2 * a_x3 - c_vx2 * a_y3;
-	
-	const c_3 = c_vx1 * c_vy2 - c_vx2 * c_vy1;
-	if(c_3 === 0){ //平行によりうまく求められないとき。
-		const result=new CrossPont();
-		result.x=(a_x2 + a_x3) * 0.5;
-		result.y=(a_y2 + a_y3) * 0.5;
-		result.parallel=true;
-		return result;
-	} else {
-		const result=new CrossPont();
-		result.x= (c_1 * c_vx2 - c_2 * c_vx1) / c_3;
-		result.y=(c_vy1 * c_2 - c_vy2 * c_1) / c_3;
-		result.parallel=false;
-		return result;
-	}
-}
