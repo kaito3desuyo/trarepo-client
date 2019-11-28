@@ -36,7 +36,7 @@ export namespace RouteMAP{
 
 		}
 	}
-	export class Route{
+	class Route{
 		public jptiRoute:JPTIroute;
 
 
@@ -48,7 +48,7 @@ export namespace RouteMAP{
 		public l_points:CircleMarker[]=[];
 		public points:Point2[]=[];
 	}
-	export class Station{
+	class Station{
 		public jptiStation:JPTIstation;
 		get lat(){
 			return this.jptiStation.lat;
@@ -144,18 +144,18 @@ export namespace RouteMAP{
 			//線
 			for (let routeID in this.routes) {
 
-				this.routes[routeID].polylines = L.polyline(this.routes[routeID].latlngs, {"color": this.routes[routeID].jptiRoute.color, "weight": 5, opacity: 0.5}).addTo(this.routeLayer);
+				this.routes[routeID].polylines = L.polyline(this.routes[routeID].latlngs, {"color": this.routes[routeID].jptiRoute.color, "weight": 5, opacity: 0.5}).addTo(this.routeLayer).on("click",()=>this.routeClicked(routeID));
 				this.routes[routeID].l_points = [];
 				for (let stationIndex = 0; stationIndex <this.routes[routeID].points.length; stationIndex++) {
 					this.routes[routeID].l_points.push(L.circleMarker(this.routes[routeID].points[stationIndex].latlon,
-						{"color": "#000000", "fillColor": "#c0c0c0", "fillOpacity": 1, "radius": 2.5, "weight": 0.5, "opacity": 1}).addTo(this.stationMarkLayer));
+						{"color": "#000000", "fillColor": "#c0c0c0", "fillOpacity": 1, "radius": 2.5, "weight": 0.5, "opacity": 1}).addTo(this.stationMarkLayer).on("click",()=>{this.stationClicked(this.routes[routeID].jptiRoute.stations[stationIndex].station.id)}));
 				}
 			}
 			//駅
 			//駅名
 			for (let stationID in this.stations) {
 				this.stations[stationID].nameMarker=L.marker([this.stations[stationID].lat, this.stations[stationID].lon],
-					{"icon": L.divIcon({"html": this.stations[stationID].jptiStation.name, className: "className", iconSize: [100, 16], iconAnchor: [-4, -4]})}).addTo(this.stationNameLayer);
+					{"icon": L.divIcon({"html": this.stations[stationID].jptiStation.name, className: "className", iconSize: [100, 16], iconAnchor: [-4, -4]})}).addTo(this.stationNameLayer).on("click",()=>this.stationClicked(stationID));
 			}
 			this.f_zoom();
 			console.log("end zoom:"+(new Date().getTime()-startTime));
@@ -365,6 +365,15 @@ export namespace RouteMAP{
 			}
 
 
+		}
+
+		private stationClicked(station:string){
+			console.log(station);
+			console.log(this.stations[station].jptiStation.name);
+		}
+		private routeClicked(routeID:string){
+			console.log(routeID);
+			console.log(this.routes[routeID].jptiRoute.name);
 		}
 
 

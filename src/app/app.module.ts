@@ -8,7 +8,8 @@ import {FormsModule} from '@angular/forms';
 import { EditStopComponent } from './edit-station/edit-stop/edit-stop.component';
 import { EditRouteComponent } from './edit-route/edit-route.component';
 import { RoutemapComponent } from './routemap/routemap.component';
-
+import {MatTabsModule} from '@angular/material/tabs';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,7 +21,9 @@ import { RoutemapComponent } from './routemap/routemap.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+      MatTabsModule,
+      BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
