@@ -39,7 +39,7 @@ export class RoutemapService {
 
     this.routeMap=new RouteMapMain(this,this.showRoutes,this.showStations);
     //routeMapのイベント処理
-    this.routeMap.setRouteClickedListener((routeID:string)=>{
+    this.routeMap.setRouteClickedListener((routeID:string)=> {
       if(this.onFocusRouteEdit){
         this.routeService.setRouteByID(routeID);
       }
@@ -95,10 +95,10 @@ export class RoutemapService {
       const route=new Route();
       route.jptiRoute=this.routeService.cacheRoute[routeID];
       this.showRoutes[routeID]=route;
-      for(var stationIndex=0; stationIndex<route.jptiRoute.stations.length;stationIndex++){
-        const jptiStation=route.jptiRoute.stations[stationIndex].station;
+      for(var stationIndex=0; stationIndex<route.jptiRoute.routeStations.length; stationIndex++){
+        const stationID=route.jptiRoute.routeStations[stationIndex].stationID;
         const station=new Station();
-        station.jptiStation=jptiStation;
+        station.jptiStation=this.stationService.cacheStation[stationID];
         this.showStations[station.jptiStation.id]=station;
       }
     }

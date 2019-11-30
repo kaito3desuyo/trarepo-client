@@ -28,8 +28,8 @@ export class JPTIapi{
 			route.color=kl.route[routeID].color;
 			for(const s of kl.route[routeID].stationList){
 				const routeStation=new RouteStation();
-				routeStation.station=this.stations[s];
-				route.stations.push(routeStation);
+				routeStation.stationID=s;
+				route.routeStations.push(routeStation);
 			}
 			this.routes[routeID]=route;
 

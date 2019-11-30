@@ -27,8 +27,31 @@ export class StationService {
     this.loadStationFromKLAPI(34,36,135,136);
   }
 
+  public async getStation(stationID:string):Promise<Station>{
+    if(stationID in this.cacheStation){
+      await this.loadStation(stationID);
+    }
+    return this.cacheStation[stationID];
+  }
+
+  private loadStation(stationID:string):Promise<Station>{
+    return new Promise<Station>(resolve => {
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = () =>{
+        if(req.readyState == 4 && req.status == 200){
+          const responce=JSON.parse(req.response)["station"];
+          for(var id in responce){
+            this.addStation(responce[id]);
+          }
+        }
+      };
+      req.open("GET", "https://kamelong.com/nodeJS/api", false);
+      req.send(null);
+    })
+  }
+
   //今表示するべき駅
-  public getStation():Observable<Station>{
+  public getEditStation():Observable<Station>{
     return this.nowStation.asObservable();
   }
 
