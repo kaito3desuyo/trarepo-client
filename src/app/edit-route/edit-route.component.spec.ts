@@ -14,6 +14,12 @@ describe('EditRouteComponent', () => {
   }));
 
   beforeEach(() => {
+    describe('テスト',() => {
+      beforeEach(() =>{
+        //初期化処理
+      });
+
+    });
     fixture = TestBed.createComponent(EditRouteComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

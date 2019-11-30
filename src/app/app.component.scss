@@ -1,0 +1,16 @@
+.main{
+  display: flex;
+  width: 100%;
+}
+.main-left{
+  display: block;
+  width: calc(100% - 500px);
+  height:800px;
+}
+.main-right{
+  display: block;
+  width: 500px;
+  padding-left: 50px;
+  overflow: auto;
+  height:800px;
+}

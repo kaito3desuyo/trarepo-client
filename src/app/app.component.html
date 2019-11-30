@@ -1,4 +1,25 @@
+<div style="text-align:center">
+    <h1 id="title">
+        トラれぽ　路線制作ページ
+    </h1>
+</div>
+<!--スプリットデザイン参考はhttps://webdesignday.jp/inspiration/technique/css/3962/-->
+<div class="main">
+    <div class="main-left">
+        <app-routemap></app-routemap>
+    </div>
+    <div class="main-right">
+        <mat-tab-group (selectedTabChange)="onTabChange($event)" >
+            <mat-tab label="駅">
+                <app-edit-station></app-edit-station>
+            </mat-tab>
+            <mat-tab label="路線">
+                <app-edit-route></app-edit-route>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>
+<div>
+</div>
 <!--The content below is only a placeholder and can be replaced.-->
-<app-edit-route></app-edit-route>
-
 <router-outlet></router-outlet>

@@ -1,13 +1,4 @@
-<div style="text-align:center">
-    <h1 id="title">
-        トラれぽ　駅制作ページ
-    </h1>
-</div>
-<!--スプリットデザイン参考はhttps://webdesignday.jp/inspiration/technique/css/3962/-->
-<div class="main">
-    <div class="main-left">
-        <div id="div1" onContextmenu="return false;"></div>
-    </div>
+<div class="station">
     <div class="main-right">
         <div *ngIf="station==null" id="stationIsNull">
             駅が選択されていません。
@@ -66,16 +57,10 @@
 </div>
 <div>
     <h3>開発者メモ</h3>
-    現在はまだbusmap.jsとAngular側の統合ができていない。
-    将来busmapがModule化される可能性に賭けて放置する。
-    busmapがModule化されたらそのままtypescriptに書き直してangular側と共通のstationを使う。
-    Module化されなければ、自分でtypescriptで書き直す。
-    <br/>
-    緯度経度で区切って、必要な部分だけ駅データを読み込んでいる。
-    mapスクロールした時に、駅データ再読み込みする必要がある。
+  駅名を変更してもMAP側で反映されない。
+  新規駅作成しても駅名が出るだけで、駅の●が出ない。（これはrouteの所属していない駅は●が表示されないことが問題)
+
 
 </div>
 
-<div id="mapMenu" (click)="makeNewStation()">
-この場所に駅を作成する
-</div>
+
