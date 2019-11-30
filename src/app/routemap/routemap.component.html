@@ -1,6 +1,4 @@
-<div class="main">
-    <div class="main-left">
-        <div id="div1" onContextmenu="return false;"></div>
-        <div id="div_leaflet"></div>
-    </div>
+<div id="div_leaflet"  (contextmenu)=onContextMenu($event) onContextmenu="return false;" (click)="this.routeMAPservice.dismissMenu()"></div>
+<div id="mapMenu" (click)="makeNewStation()">
+  この場所に駅を作成する
 </div>

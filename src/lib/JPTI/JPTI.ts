@@ -148,6 +148,7 @@ export namespace JPTI{
         public stations:Array<RouteStation>=[];
 
         public loadFromJSON(value:JSON){
+          console.log(value);
             this._id=value["id"];
             this.name=value["name"];
             this.color=value["color"];

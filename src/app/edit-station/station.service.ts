@@ -4,35 +4,46 @@ import {__await} from "tslib";
 import {JPTI} from "../../lib/JPTI/JPTI";
 import Station = JPTI.Station;
 import Stop = JPTI.Stop;
+import {RoutemapService} from "../routemap/routemap.service";
 @Injectable({
   providedIn: 'root'
 })
 export class StationService {
-  private stations:{[key:string]:Station;}={};
+  //キャッシュとして保存している駅
+  public  cacheStation:{[key:string]:Station;}={};
 
-  private deteleStations:Array<Station>=[];
-  private deteleStops:Array<Stop>=[];
-  private updateStations:Array<Station>=[];
-  private updateStops:Array<Stop>=[];
-
+  //今編集する駅
   private nowStation:BehaviorSubject<Station>=new BehaviorSubject(null);
 
+  //相互に注入することを防ぐために、routemapは後から設定する。
+  private routemapService:RoutemapService;
+
+  //routemap側から呼び出すこと
+  public setRouteMapService(routeMapService:RoutemapService){
+    this.routemapService=routeMapService;
+  }
 
   constructor() {
     this.loadStationFromKLAPI(34,36,135,136);
-
   }
-  getStation():Observable<Station>{
+
+  //今表示するべき駅
+  public getStation():Observable<Station>{
     return this.nowStation.asObservable();
   }
-  makeNewStation(lat:number,lon:number){
+
+  //新規駅を作る
+  public makeNewStation(lat:number,lon:number){
     const newStation=new Station();
     newStation.lat=lat;
     newStation.lon=lon;
-    this.stations[newStation.id]=newStation;
+    this.cacheStation[newStation.id]=newStation;
     this.nowStation.next(newStation);
+    this.routemapService.changeStation(newStation.id);
   }
-  loadStationFromKLAPI(minLat:number,maxLat:number,minLon:number,maxLon:number){
+
+  //APIから駅を読み込む
+  public loadStationFromKLAPI(minLat:number,maxLat:number,minLon:number,maxLon:number){
       var req = new XMLHttpRequest();
       req.onreadystatechange = () =>{
         if(req.readyState == 4 && req.status == 200){
@@ -45,18 +56,17 @@ export class StationService {
       req.open("GET", "https://kamelong.com/nodeJS/api?minLat="+minLat.toString()+"&maxLat="+maxLat.toString()+"&minLon="+minLon.toString()+"&maxLon="+maxLon.toString()+"&zoomLevel=10", false);
       req.send(null);
   }
-  addStation(value:JSON){
+  //jsonから駅を追加する
+  public addStation(value:JSON){
     const station=new Station();
     station.loadFromJSON(value);
-    this.stations[station.id]=station;
+    this.cacheStation[station.id]=station;
   }
-  setNowStation(id:string){
-    if(id in this.stations){
-      this.nowStation.next(this.stations[id]);
+
+  //編集する駅を設定する
+  public setNowStation(id:string){
+    if(id in this.cacheStation){
+      this.nowStation.next(this.cacheStation[id]);
     }
-
   }
-
-
-
 }

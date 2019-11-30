@@ -1,5 +1,15 @@
 #div_leaflet{
-  height:1000px;
-  width:1000px;
+  //PC向け
+  height:800px;
+  width:100%;
 
+}
+#mapMenu{
+  display: none;
+  position: fixed;
+  width: 200px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 1px 1px 1px rgba(0,0,0,.2);
+  z-index: 1000;
 }

@@ -9,7 +9,7 @@
         <app-routemap></app-routemap>
     </div>
     <div class="main-right">
-        <mat-tab-group>
+        <mat-tab-group (selectedTabChange)="onTabChange($event)" >
             <mat-tab label="駅">
                 <app-edit-station></app-edit-station>
             </mat-tab>
@@ -20,23 +20,6 @@
     </div>
 </div>
 <div>
-    <h3>開発者メモ</h3>
-    agencyを作っていないかったので、routeを編集なのにAgency設定がありません。
-    Agencyはセレクトボックスで指定できそうだけど、Agencyの数が増えることも考えると検索機能必須かな。
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
 <!--The content below is only a placeholder and can be replaced.-->
-
-
 <router-outlet></router-outlet>

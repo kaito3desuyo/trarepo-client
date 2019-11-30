@@ -1,14 +1,3 @@
-<div style="text-align:center">
-    <h1 id="title">
-        トラれぽ　路線制作ページ
-    </h1>
-</div>
-<!--スプリットデザイン参考はhttps://webdesignday.jp/inspiration/technique/css/3962/-->
-<div class="main">
-    <div class="main-left">
-        <div id="div1" onContextmenu="return false;"></div>
-    </div>
-    <div class="main-right">
         <div *ngIf="route.isNull()" id="routeIsNull">
             路線が選択されていません。
             <div>
@@ -66,27 +55,28 @@
                 </div>
             </div>
             <h3>停車駅の設定</h3>
-            <svg id="stations" class="fs-station-railmap" [attr.height]="56*stationData.length+100" (mousemove)="railmapMouseMove($event)">
-                <g *ngFor="let station of stationData.slice(0,stationData.length-1)">
+            <svg id="stations" class="fs-station-railmap" [attr.height]="56*stationData.length+100" (mousemove)="stationSelectorMouseMove($event)" >
+                <g *ngFor="let station of stationData.slice(0,stationData.length-1)" (click)="addStationMode(false)">
                     <line class="fs-railmap-line" [attr.x1]="84" [attr.x2]="84" [attr.y1]="station.y1" [attr.y2]="station.y2"></line>
                 </g>
-                <g *ngFor="let station of stationData">
+                <g *ngFor="let station of stationData" (click)="addStationMode(false)">
                     <text (click)="deleteStation(station.station)" class="" x="14" [attr.y]="station.y1+4">削除</text>
                     <text class="fs-railmap-station" x="104" [attr.y]="station.y1+4">{{station.station.station.name}}</text>
                     <circle class="fs-railmap-circle" cx="84" [attr.cy]="station.y1" r="12"></circle>
                     <text class="fs-railmap-tracks" x="84" [attr.y]="station.y1+4"></text>
                 </g>
-                <g *ngIf="showInsertStation" (click)="addStation()" class="fs-railmap-insert" [attr.transform]="transformY()">
+                <g *ngIf="showInsertStation" (click)="addStationMode(true)" class="fs-railmap-insert" [attr.transform]="transformY()">
                     <line x1="0" x2="300" y1="0.5" y2="0" stroke-dasharray="2 1"></line>
                     <circle  cx="84" cy="0" r="8"></circle><path d="M84 -4 l0 8m-4 -4l 8 0"></path>
                 </g>
             </svg>
         </div>
-    </div>
-</div>
 <div>
     <h3>開発者メモ</h3>
     agencyを作っていないかったので、routeを編集なのにAgency設定がありません。
-    Agencyはセレクトボックスで指定できそうだけど、Agencyの数が増えることも考えると検索機能必須かな。
+    Agencyはセレクトボックスで指定できそうだけど、Agencyの数が増えることも考えると検索機能必須かな.
+  <br/>
+  <br/>
+  路線のクリック判定よりも駅名のクリック判定の方が上にあるせいで、駅に反応してしまい、路線クリックできない部分がある。
 </div>
 
