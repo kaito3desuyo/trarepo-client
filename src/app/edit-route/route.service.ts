@@ -65,6 +65,7 @@ export class RouteService {
   public async setRouteByID(routeID:string){
     await this.loadRoute(routeID);
     this.route.next(this.cacheRoute[routeID]);
+    return;
   }
 
   //非推奨関数

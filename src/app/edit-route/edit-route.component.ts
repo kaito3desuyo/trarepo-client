@@ -34,14 +34,13 @@ export class EditRouteComponent implements OnInit {
   }
 
   //駅リスト更新
-  public async init(){
+  public init(){
     this.enableRailMapMouse=true;
     this.stationData=[];
     for(let i=0; i<this.route.routeStations.length; i++){
       const station=new StationData();
       station.routeStation=this.route.routeStations[i];
-      await this.stationService.getStation(station.routeStation.stationID).then((s)=>station.station=s);
-      // this.stationService.getStation(station.routeStation.stationID).then((s)=>station.station=s);
+      this.stationService.getStation(station.routeStation.stationID).then((s)=>{station.station=s});
       station.y1=40+56*i;
       station.y2=96+56*i;
       this.stationData.push(station);

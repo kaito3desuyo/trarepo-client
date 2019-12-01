@@ -24,12 +24,24 @@ export class StationService {
   }
 
   constructor() {
-    this.loadStationFromKLAPI(34,36,135,136);
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = () =>{
+      if(req.readyState == 4 && req.status == 200){
+        const responce=JSON.parse(req.response);
+        for(var id in responce){
+          this.addStation(responce[id]);
+        }
+      }
+    };
+    req.open("GET", "https://kamelong.com/nodeJS/api/station", false);
+    req.send(null);
   }
 
   public async getStation(stationID:string):Promise<Station>{
     if(stationID in this.cacheStation){
+    }else{
       await this.loadStation(stationID);
+
     }
     return this.cacheStation[stationID];
   }
@@ -44,6 +56,7 @@ export class StationService {
             this.addStation(responce[id]);
           }
         }
+        resolve();
       };
       req.open("GET", "https://kamelong.com/nodeJS/api", false);
       req.send(null);

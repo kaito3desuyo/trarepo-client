@@ -50,6 +50,7 @@ export function f_xhr_get(a_url:string, a_type:XMLHttpRequestResponseType):Promi
 		c_xhr.onloadend = ()=>{
 			if (c_xhr.status === 200) {
 				const res=c_xhr.response;
+				console.log(res);
 				const kl=res as KLAPI;
 				const jptiData=new JPTIapi();
 				jptiData.putKLAPI(kl);
