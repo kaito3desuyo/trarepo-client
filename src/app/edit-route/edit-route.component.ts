@@ -5,6 +5,7 @@ import {StationService} from "../edit-station/station.service";
 import {JPTI} from "../../lib/JPTI/JPTI";
 import Route = JPTI.Route;
 import RouteStation = JPTI.RouteStation;
+import Station = JPTI.Station;
 @Component({
   selector: 'app-edit-route',
   templateUrl: './edit-route.component.html',
@@ -26,7 +27,7 @@ export class EditRouteComponent implements OnInit {
   constructor(private routeService:RouteService,private stationService:StationService) { }
 
   ngOnInit() {
-    this.routeService.getRoute().subscribe(route=>{
+    this.routeService.getEditRoute().subscribe(route=>{
       this.route=route;
       this.init();
     });
@@ -36,14 +37,16 @@ export class EditRouteComponent implements OnInit {
   public init(){
     this.enableRailMapMouse=true;
     this.stationData=[];
-    for(let i=0;i<this.route.stations.length;i++){
+    for(let i=0; i<this.route.routeStations.length; i++){
       const station=new StationData();
-      station.station=this.route.stations[i];
+      station.routeStation=this.route.routeStations[i];
+      this.stationService.getStation(station.routeStation.stationID).then((s)=>{station.station=s});
       station.y1=40+56*i;
       station.y2=96+56*i;
       this.stationData.push(station);
     }
   }
+
 
   /**
    駅リスト部分でマウスが動いたときに発火する
@@ -121,5 +124,6 @@ export class EditRouteComponent implements OnInit {
 class StationData{
   public y1=0;
   public y2=0;
-  public station:RouteStation=new RouteStation();
+  public routeStation:RouteStation=new RouteStation();
+  public station:Station=new Station();
 }

@@ -145,25 +145,18 @@ export namespace JPTI{
         /**
          * The stations that make up this route
          */
-        public stations:Array<RouteStation>=[];
+        public routeStations:Array<RouteStation>=[];
 
         public loadFromJSON(value:JSON){
           console.log(value);
             this._id=value["id"];
             this.name=value["name"];
             this.color=value["color"];
+            this.routeStations==[];
             for(var i=0; i<value["stationList"].length;i++){
-                const j=i;
-                this.stations.push(new RouteStation());
-                const req = new XMLHttpRequest();
-                req.onreadystatechange = () =>{
-                    if(req.readyState == 4 && req.status == 200){
-                        const responce=JSON.parse(req.response);
-                        this.stations[j].station.loadFromJSON(responce);
-                    }
-                };
-                req.open("GET", "https://kamelong.com/nodeJS/api/station?stationID="+value["stationList"][j], true);
-                req.send(null);
+              const routeStation=new RouteStation();
+              routeStation.stationID=value["stationList"][i];
+              this.routeStations.push(routeStation);
             }
         }
 
@@ -180,7 +173,7 @@ export namespace JPTI{
         get id():string{
             return this._id;
         }
-        public station:Station=new Station();
+        public stationID:string="";
 
     }
     export class Service{

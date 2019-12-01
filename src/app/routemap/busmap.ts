@@ -142,7 +142,7 @@ export namespace RouteMAP{
         this.routes[routeID].l_points = [];
         for (let stationIndex = 0; stationIndex <this.routes[routeID].points.length; stationIndex++) {
           this.routes[routeID].l_points.push(L.circleMarker(this.routes[routeID].points[stationIndex].latlon,
-            {"color": "#000000", "fillColor": "#c0c0c0", "fillOpacity": 1, "radius": 2.5, "weight": 0.5, "opacity": 1}).addTo(this.stationMarkLayer).on("click",()=>{this.stationClicked(this.routes[routeID].jptiRoute.stations[stationIndex].station.id)}));
+            {"color": "#000000", "fillColor": "#c0c0c0", "fillOpacity": 1, "radius": 2.5, "weight": 0.5, "opacity": 1}).addTo(this.stationMarkLayer).on("click",()=>{this.stationClicked(this.routes[routeID].jptiRoute.routeStations[stationIndex].stationID)}));
         }
       }
       //駅
@@ -192,9 +192,9 @@ export namespace RouteMAP{
       //keyはrouteID
       for (let routeID in this.routes) {
         this.routes[routeID].segmentList=[];
-        for (let stationIndex = 0; stationIndex < this.routes[routeID].jptiRoute.stations.length - 1; stationIndex++) {
-          const startStationID = this.routes[routeID].jptiRoute.stations[stationIndex].station.id;
-          const endStationID = this.routes[routeID].jptiRoute.stations[stationIndex + 1].station.id;
+        for (let stationIndex = 0; stationIndex < this.routes[routeID].jptiRoute.routeStations.length - 1; stationIndex++) {
+          const startStationID = this.routes[routeID].jptiRoute.routeStations[stationIndex].stationID;
+          const endStationID = this.routes[routeID].jptiRoute.routeStations[stationIndex + 1].stationID;
           const segment=new Segment();
           segment.sid=startStationID;
           segment.eid=endStationID;

@@ -20,7 +20,7 @@ export class EditStationComponent implements OnInit {
   constructor(private stationService:StationService) { }
 
   ngOnInit() {
-    this.stationService.getStation().subscribe(station=>this.station=station);
+    this.stationService.getEditStation().subscribe(station=>this.station=station);
     window.openStation=function (id:string) {
       console.log(id)
     };

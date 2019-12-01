@@ -4,6 +4,7 @@ import {JPTI} from "../../lib/JPTI/JPTI";
 import Route = JPTI.Route;
 import RouteStation = JPTI.RouteStation;
 import {RoutemapService} from "../routemap/routemap.service";
+import {JPTIapi, KLAPI} from "../routemap/f_xhr_get";
 
 @Injectable({
   providedIn: 'root'
@@ -23,30 +24,48 @@ export class RouteService {
     this.routemapService=routeMapService;
   }
 
+
+  public async getRoute(routeID:string):Promise<Route>{
+    if(routeID in this.cacheRoute){
+    }else{
+      await this.loadRoute(routeID);
+    }
+    return this.cacheRoute[routeID];
+  }
+
   constructor() {
     const route=new Route();
     route.asNullRoute();
     this.route.next(route);
   }
-  getRoute():Observable<Route>{
+  getEditRoute():Observable<Route>{
     return this.route.asObservable();
   }
 
   //サーバーからrouteを取得する。
-  public setRouteByID(routeID:string){
-    var req = new XMLHttpRequest();
-    req.onreadystatechange = () =>{
-      if(req.readyState == 4 && req.status == 200){
-        console.log(req.response);
-        const route=new Route();
-        const json=JSON.parse(req.response)["route"];
-        route.loadFromJSON(json[Object.keys(json)[0]]);
-        this.route.next(route);
-        this.cacheRoute[route.id]=route;
-      }
-    };
-    req.open("GET", "https://kamelong.com/nodeJS/api/route?routeID="+routeID, false);
-    req.send(null);
+  private loadRoute(routeID:string):Promise<Route> {
+    return new Promise<Route>((resolve, reject) => {
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = () => {
+        if (req.readyState == 4 && req.status == 200) {
+          console.log(req.response);
+          const route = new Route();
+          const json = JSON.parse(req.response)["route"];
+          route.loadFromJSON(json[Object.keys(json)[0]]);
+          this.cacheRoute[route.id] = route;
+          resolve(route);
+        }
+      };
+      req.open("GET", "https://kamelong.com/nodeJS/api/route?routeID=" + routeID, false);
+      req.send(null);
+    })
+  }
+
+
+  public async setRouteByID(routeID:string){
+    await this.loadRoute(routeID);
+    this.route.next(this.cacheRoute[routeID]);
+    return;
   }
 
   //非推奨関数
@@ -99,35 +118,23 @@ export class RouteService {
   //駅を追加する。
   public selectStation(stationID:string){
     if(this.stationInsertMode){
-      var req = new XMLHttpRequest();
-      req.onreadystatechange = () =>{
-        if(req.readyState == 4 && req.status == 200){
-          const responce=JSON.parse(req.response);
-          const station=new RouteStation();
-          station.station.loadFromJSON(responce);
-          this.route.getValue().stations.splice(this.posInsertStation,0,station);
-          this.posInsertStation++;
-          this.route.next(this.route.getValue());
-          this.routemapService.changeRoute(this.route.getValue().id);
-
-        //todo routeが変更されたのでサーバー側も変更する
-
-        }
-      };
-      req.open("GET", "https://kamelong.com/nodeJS/api/station?stationID="+stationID, false);
-      req.send(null);
-
+      const station=new RouteStation();
+      station.stationID=stationID;
+      this.route.getValue().routeStations.splice(this.posInsertStation,0,station);
+      this.posInsertStation++;
+      this.route.next(this.route.getValue());
+      this.routemapService.changeRoute(this.route.getValue().id);
     }
   }
   /**
    * 路線から駅を削除する
    */
   public deleteStation(station:RouteStation){
-    const index=this.route.getValue().stations.indexOf(station);
+    const index=this.route.getValue().routeStations.indexOf(station);
     if(index>this.posInsertStation){
       this.posInsertStation--;
     }
-    this.route.getValue().stations.splice(index,1);
+    this.route.getValue().routeStations.splice(index,1);
     this.routemapService.changeRoute(this.route.getValue().id);
   }
 
